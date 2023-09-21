@@ -1,11 +1,11 @@
-package frc.robot.Utils.CriticalLED;
+package frc.team9062.robot.Utils.CriticalLED;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
+import frc.team9062.robot.Robot;
 
 public class CriticalLED extends SubsystemBase {
     private int port;

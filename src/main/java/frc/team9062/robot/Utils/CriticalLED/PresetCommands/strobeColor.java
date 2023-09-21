@@ -1,9 +1,9 @@
-package frc.robot.Utils.CriticalLED.PresetCommands;
+package frc.team9062.robot.Utils.CriticalLED.PresetCommands;
 
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.Utils.CriticalLED.CriticalLED;
-import frc.robot.Utils.CriticalLED.LEDCommandBase;
-import frc.robot.Utils.CriticalLED.CriticalLED.bufferArrayType;
+import frc.team9062.robot.Utils.CriticalLED.CriticalLED;
+import frc.team9062.robot.Utils.CriticalLED.LEDCommandBase;
+import frc.team9062.robot.Utils.CriticalLED.CriticalLED.bufferArrayType;
 
 public class strobeColor extends LEDCommandBase {
     int IntervalMs;

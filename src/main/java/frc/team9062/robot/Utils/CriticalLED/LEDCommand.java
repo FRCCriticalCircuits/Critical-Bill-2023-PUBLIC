@@ -1,4 +1,4 @@
-package frc.robot.Utils.CriticalLED;
+package frc.team9062.robot.Utils.CriticalLED;
 
 public interface LEDCommand {
 

@@ -1,8 +1,8 @@
-package frc.robot.Utils;
+package frc.team9062.robot.Utils;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Constants;
+import frc.team9062.robot.Constants;
 
 public class IO {
     private static IO instance;
