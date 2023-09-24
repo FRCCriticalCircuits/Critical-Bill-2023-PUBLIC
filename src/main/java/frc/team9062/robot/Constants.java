@@ -106,8 +106,8 @@ public class Constants {
     }
 
     public static class PhysicalConstants {
-        public static final double TRACK_WIDTH = 24; // Square Base, so no track length needed
-        public static final double TRACK_WIDTH_METERS = 0.6096;
+        public static final double TRACK_WIDTH = 18.75; // Square Base, so no track length needed
+        public static final double TRACK_WIDTH_METERS = 0.47625;
 
         public final SwerveDriveKinematics KINEMATIS = new SwerveDriveKinematics(
             new Translation2d(TRACK_WIDTH_METERS, TRACK_WIDTH_METERS),
@@ -147,7 +147,7 @@ public class Constants {
 
         // --------------------------------------------------
     
-        public static final double NOMINAL_VOLTAGE = 10; // For Comp saturation
+        public static final double NOMINAL_VOLTAGE = 10.5; // For Comp saturation
 
         public static final boolean GYRO_ISREVERSED = false;
 
@@ -168,5 +168,5 @@ public class Constants {
     public static final double LOOP_TIME_S = 0.02;
     public static final int LOOP_TIME_MS = 20;
 
-    public static final int LED_BUFFER_LENGTH = 60;
+    public static final int LED_BUFFER_LENGTH = 56;
 }
