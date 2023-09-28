@@ -17,21 +17,26 @@ public class Constants {
         // DRIVE ID'S
         // -----------------------------------------------
 
-        public static final int FRONT_LEFT_DRIVE = 1;
-        public static final int FRONT_LEFT_TURN = 2;
-        public static final int FRONT_LEFT_CANCODER = 3;
-
-        public static final int FRONT_RIGHT_DRIVE = 4;
-        public static final int FRONT_RIGHT_TURN = 5;
-        public static final int FRONT_RIGHT_CANCODER = 6;
-
-        public static final int REAR_LEFT_DRIVE = 7;
-        public static final int REAR_LEFT_TURN = 8;
-        public static final int REAR_LEFT_CANCODER = 9;
-
-        public static final int REAR_RIGHT_DRIVE = 10;
-        public static final int REAR_RIGHT_TURN = 11;
-        public static final int REAR_RIGHT_CANCODER = 12;
+        public static final int FRONT_LEFT_FORWARD_ID = 1;
+        public static final int FRONT_LEFT_ROTATION_ID = 2;
+        public static final int FRONT_LEFT_CANCODER_ID = 3;
+        public static final double FRONT_LEFT_OFFSET = 56.6 - 114;
+    
+        public static final int FRONT_RIGHT_FORWARD_ID = 4;
+        public static final int FRONT_RIGHT_ROTATION_ID = 5;
+        public static final int FRONT_RIGHT_CANCODER_ID = 6;
+        public static final double FRONT_RIGHT_OFFSET = -64.893 + 129;
+    
+        public static final int REAR_LEFT_FORWARD_ID = 7;
+        public static final int REAR_LEFT_ROTATION_ID = 8;
+        public static final int REAR_LEFT_CANCODER_ID = 9;
+        public static final double REAR_LEFT_OFFSET = -65 + 130;
+    
+        public static final int REAR_RIGHT_FORWARD_ID = 10;
+        public static final int REAR_RIGHT_ROTATION_ID = 11;
+        public static final int REAR_RIGHT_CANCODER_ID = 12;
+        public static final double REAR_RIGHT_OFFSET = -50 - 104;
+    
 
         // -----------------------------------------------
 
@@ -63,19 +68,19 @@ public class Constants {
         // DRIVE
         // ------------------------------------------------
 
-        public static final double PIDF0_DRIVE_P = 0;
+        public static final double PIDF0_DRIVE_P = 0.003405;
         public static final double PIDF0_DRIVE_I = 0;
         public static final double PIDF0_DRIVE_D = 0;
-        public static final double PIDF0_DRIVE_F = 0;
+        public static final double PIDF0_DRIVE_F = 0.315;
 
         public static final double FEED_DRIVE_KV = 0;
         public static final double FEED_DRIVE_KS = 0;
         public static final double FEED_DRIVE_KA = 0;
 
-        public static final double PIDF0_TURN_P = 0;
+        public static final double PIDF0_TURN_P = 0.003405;
         public static final double PIDF0_TURN_I = 0;
         public static final double PIDF0_TURN_D = 0;
-        public static final double PIDF0_TURN_F = 0;
+        public static final double PIDF0_TURN_F = 0.000018;
 
         // ------------------------------------------------
 
@@ -109,7 +114,7 @@ public class Constants {
         public static final double TRACK_WIDTH = 18.75; // Square Base, so no track length needed
         public static final double TRACK_WIDTH_METERS = 0.47625;
 
-        public final SwerveDriveKinematics KINEMATIS = new SwerveDriveKinematics(
+        public final static SwerveDriveKinematics KINEMATIS = new SwerveDriveKinematics(
             new Translation2d(TRACK_WIDTH_METERS, TRACK_WIDTH_METERS),
             new Translation2d(TRACK_WIDTH_METERS, -TRACK_WIDTH_METERS),
             new Translation2d(-TRACK_WIDTH_METERS, TRACK_WIDTH_METERS),
