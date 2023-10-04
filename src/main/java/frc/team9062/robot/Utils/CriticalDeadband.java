@@ -3,7 +3,7 @@ package frc.team9062.robot.Utils;
 import java.util.function.DoubleSupplier;
 
 public class CriticalDeadband {
-    private double range = 1, min, max, threshold = 0.1;
+    private double range = 1, min, max, threshold = 0.1, neutral = 0;
 
     /**
      * Contructor for instance of CriticalDeadband Class. The default range would be 1
@@ -65,19 +65,19 @@ public class CriticalDeadband {
     public double applydeadband(DoubleSupplier axis) {
         double thresAxis, adjustedRange = range;
 
-        if(axis.getAsDouble() > threshold) {
-            thresAxis = axis.getAsDouble() - threshold;
+        if(Math.abs(axis.getAsDouble()) > threshold) {
+            thresAxis = Math.abs(axis.getAsDouble()) - threshold;
 
             if(!isMaxMin()) {
-                return thresAxis / (adjustedRange - threshold);
+                return (thresAxis / (adjustedRange - threshold)) * Math.signum(axis.getAsDouble());
             }else {
                 adjustedRange = max - min;
                 
-                return thresAxis / (adjustedRange - threshold);
+                return (thresAxis / (adjustedRange - threshold)) * Math.signum(axis.getAsDouble());
             }
+        }else {
+            return neutral;
         }
-
-        return min;
     }
 
     /**
@@ -86,22 +86,22 @@ public class CriticalDeadband {
      * @param axis Double which the deadband is going to be applied to
      * @return The calculated value of the inputed axis
      */
-    public double calculate(double axis) {
+    public double applydeadband(double axis) {
         double thresAxis, adjustedRange = range;
 
-        if(axis > threshold) {
-            thresAxis = axis - threshold;
+        if(Math.abs(axis) > threshold) {
+            thresAxis = Math.abs(axis) - threshold;
 
             if(!isMaxMin()) {
-                return thresAxis / (adjustedRange - threshold);
+                return (thresAxis / (adjustedRange - threshold)) * Math.signum(axis);
             }else {
                 adjustedRange = max - min;
                 
-                return thresAxis / (adjustedRange - threshold);
+                return (thresAxis / (adjustedRange - threshold)) * Math.signum(axis);
             }
+        }else{
+            return neutral;
         }
-
-        return min;
     }
 
     /**
