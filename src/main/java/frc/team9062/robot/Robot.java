@@ -5,16 +5,51 @@
 package frc.team9062.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.team9062.robot.Commands.teleopCommand;
+import frc.team9062.robot.Subsystems.ArmSubsystem;
+import frc.team9062.robot.Subsystems.DriveSubsystem;
+import frc.team9062.robot.Utils.CriticalLED.CriticalLED;
+import frc.team9062.robot.Utils.CriticalLED.PresetCommands.staticColor;
+import frc.team9062.robot.Utils.CriticalLED.PresetCommands.strobeColor;
 
 public class Robot extends TimedRobot {
+  private DriveSubsystem driveSubsystem;
+  private ArmSubsystem armSubsystem;
+  private teleopCommand teleopCommand;
+  private CriticalLED led = new CriticalLED(
+    Constants.IDs.LED_PORT, 
+    Constants.LED_BUFFER_LENGTH
+  );
 
   public Robot() {
-    super(0.02);
+    super(kDefaultPeriod);
+
+    driveSubsystem = DriveSubsystem.getInstance();
+    armSubsystem = ArmSubsystem.getInstance();
+    teleopCommand = new teleopCommand();
   }
 
   @Override
-  public void robotInit() {}
+  public void robotInit() {
+    driveSubsystem.setDefaultCommand(
+      teleopCommand
+    );
+
+    armSubsystem.setDefaultCommand(
+      teleopCommand
+    );
+
+    led.startLEDManagerThread();
+    led.scheduleLEDCommand(
+      new strobeColor(
+        led,
+        400,
+        Color.kRed
+      )
+    );
+  }
 
   @Override
   public void robotPeriodic() {
@@ -40,7 +75,15 @@ public class Robot extends TimedRobot {
   public void autonomousExit() {}
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    CommandScheduler.getInstance().schedule(teleopCommand);
+    led.scheduleLEDCommand(
+      new staticColor(
+        led, 
+        Color.kGreen
+      )
+    );
+  }
 
   @Override
   public void teleopPeriodic() {}
