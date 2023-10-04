@@ -34,12 +34,13 @@ public class LEDManager {
 
     public void setActiveCommand(LEDCommandBase command) {
         if(activeCommand != null) {
-            //if(!command.compare(activeCommand)){
+            if(!command.compare(activeCommand)){
                 endCurrentCommand();
-            //}
+                activeCommand = command;
+            }
+        } else {
+            activeCommand = command;
         }
-        
-        activeCommand = command;
     }
 
     public void ManageCommands() {
