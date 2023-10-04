@@ -5,22 +5,12 @@
 package frc.team9062.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.team9062.robot.Commands.teleopCommand;
-import frc.team9062.robot.Subsystems.DriveSubsystem;
-
 
 public class RobotContainer {
-  private DriveSubsystem system = new DriveSubsystem();
   public RobotContainer() {
     configureBindings();
-
-    system.setDefaultCommand(
-      new teleopCommand(
-        system,
-        true
-      )
-    );
   }
+  
   private void configureBindings() {
   }
 
