@@ -60,7 +60,7 @@ public class Constants {
 
         public static final int LIMELIGHT_SERVO = 0;
 
-        public static final int LED_PORT = 1;
+        public static final int LED_PORT = 3;
     }
 
     public static class TunedConstants {
@@ -68,19 +68,19 @@ public class Constants {
         // DRIVE
         // ------------------------------------------------
 
-        public static final double PIDF0_DRIVE_P = 0.003405;
+        public static final double PIDF0_DRIVE_P = 0; // Previously 0.003405
         public static final double PIDF0_DRIVE_I = 0;
         public static final double PIDF0_DRIVE_D = 0;
-        public static final double PIDF0_DRIVE_F = 0.315;
+        public static final double PIDF0_DRIVE_F = 0; // Previously 0.315
 
         public static final double FEED_DRIVE_KV = 0;
         public static final double FEED_DRIVE_KS = 0;
         public static final double FEED_DRIVE_KA = 0;
 
-        public static final double PIDF0_TURN_P = 0.003405;
+        public static final double PIDF0_TURN_P = 0.292;
         public static final double PIDF0_TURN_I = 0;
         public static final double PIDF0_TURN_D = 0;
-        public static final double PIDF0_TURN_F = 0.000018;
+        public static final double PIDF0_TURN_F = 0.0008;
 
         // ------------------------------------------------
 
@@ -111,28 +111,32 @@ public class Constants {
     }
 
     public static class PhysicalConstants {
-        public static final double TRACK_WIDTH = 18.75; // Square Base, so no track length needed
-        public static final double TRACK_WIDTH_METERS = 0.47625;
+        public static final double TRACK_WIDTH = 24 - 2.625; // Square Base, so no track length needed
+        public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(TRACK_WIDTH);
 
         public final static SwerveDriveKinematics KINEMATIS = new SwerveDriveKinematics(
-            new Translation2d(TRACK_WIDTH_METERS, TRACK_WIDTH_METERS),
-            new Translation2d(TRACK_WIDTH_METERS, -TRACK_WIDTH_METERS),
-            new Translation2d(-TRACK_WIDTH_METERS, TRACK_WIDTH_METERS),
-            new Translation2d(-TRACK_WIDTH_METERS, -TRACK_WIDTH_METERS)
+            new Translation2d((TRACK_WIDTH_METERS / 2), (TRACK_WIDTH_METERS / 2)),
+            new Translation2d((TRACK_WIDTH_METERS / 2), -(TRACK_WIDTH_METERS / 2)),
+            new Translation2d(-(TRACK_WIDTH_METERS / 2), (TRACK_WIDTH_METERS / 2)),
+            new Translation2d(-(TRACK_WIDTH_METERS / 2), -(TRACK_WIDTH_METERS / 2))
         );
 
         public static final double DRIVE_WHEEL_DIAMETER_INCHES = 4;
         public static final double DRIVE_WHEEL_DIAMTER_METERS = Units.inchesToMeters(4);
 
-        public static final double DRIVE_GEAR_RATIO = 1 / 6.12;
-        public static final double TURN_TURN_RATIO = 1 / (150 / 7);
+        public static final double DRIVE_GEAR_RATIO = 6.12;
+        public static final double TURN_GEAR_RATIO = 150 / 7;
 
         public static final double ARM_GEAR_RATIO = 1; // Todo: Figure out ratio
 
-        public static final double SHUFFLER_GEAR_RATIO = 1 / 1.25;
+        public static final double SHUFFLER_GEAR_RATIO = 1.25;
 
-        public static final double MAX_TRANSLATION_SPEED_METERS = 3;
-        public static final double MAX_ANGULAR_SPEED_METERS = 2;
+        public static final double MAX_TRANSLATION_SPEED_METERS = 4.3;
+        public static final double MAX_ANGULAR_SPEED_METERS = 3;
+        public static final double MAX_WHEEL_SPEED_METERS = 4.3;
+
+        public static final double MAX_ARM_VELOCITY = 1.5;
+        public static final double MAX_ARM_ACCELERATION = 0.8;
 
         // -------------------------------------------------
         // CURRENT
@@ -152,9 +156,10 @@ public class Constants {
 
         // --------------------------------------------------
     
-        public static final double NOMINAL_VOLTAGE = 10.5; // For Comp saturation
+        public static final double NOMINAL_VOLTAGE = 12; // For Comp saturation
 
-        public static final boolean GYRO_ISREVERSED = false;
+        public static final boolean isGyroReversed = true;
+        public static final double GYRO_OFFSET = 0;
 
         // --------------------------------------------------
         // ENCODER OFFSETS
@@ -166,12 +171,11 @@ public class Constants {
         public static final double REAR_RIGHT_OFFSET = 0;
 
         // --------------------------------------------------
-
         
     }
 
     public static final double LOOP_TIME_S = 0.02;
     public static final int LOOP_TIME_MS = 20;
 
-    public static final int LED_BUFFER_LENGTH = 56;
+    public static final int LED_BUFFER_LENGTH = 57;
 }
