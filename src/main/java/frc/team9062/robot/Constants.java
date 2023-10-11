@@ -10,6 +10,10 @@ public class Constants {
     public static class Controller {
         public static int DRIVER_ID = 0;
         public static int OPERATOR_ID = 1;
+
+        public static double GAMEPAD_THRESHOLD = 0.1;
+
+        public static double DRIVER_RUMBLE_STRENGTH = 0.8; // Cannot be larger than 1. The lower the number the less feedback strength the driver would feel.
     }
 
     public static class IDs{
@@ -48,7 +52,7 @@ public class Constants {
         public static final int ARM_FOLLOWER = 16;
         
         public static final int ARM_INTAKE = 17;
-        public final Port INTAKE_COLOR_SENSOR = I2C.Port.kMXP;
+        public static final Port INTAKE_COLOR_SENSOR = I2C.Port.kOnboard;
 
         public static final int SHOULDER = 18;
 
@@ -108,6 +112,26 @@ public class Constants {
         public static final double FEED_SHUFFLER_KG = 0;
 
         // -------------------------------------------------
+
+        // -------------------------------------------------
+        // AUTOBALANCE PID
+        // -------------------------------------------------
+        
+        public static final double STAGE1_AUTOBALANCE_P = 0;
+        public static final double STAGE1_AUTOBALANCE_I = 0;
+        public static final double STAGE1_AUTOBALANCE_D = 0;
+
+        public static final double STAGE2_AUTOBALANCE_P = 0;
+        public static final double STAGE2_AUTOBALANCE_I = 0;
+        public static final double STAGE2_AUTOBALANCE_D = 0;
+
+        // -------------------------------------------------
+
+        public static final double THETA_PID_P = 0;
+        public static final double THETA_PID_I = 0;
+        public static final double THETA_PID_D = 0;
+        public static final double THETA_MAX_VEL = 1;
+        public static final double THETA_MAX_ACCEL = 1;
     }
 
     public static class PhysicalConstants {
@@ -127,16 +151,16 @@ public class Constants {
         public static final double DRIVE_GEAR_RATIO = 6.12;
         public static final double TURN_GEAR_RATIO = 150 / 7;
 
-        public static final double ARM_GEAR_RATIO = 1; // Todo: Figure out ratio
+        public static final double ARM_GEAR_RATIO = 480; // Larger Tooth: 480, Smaller Tooth: 240
 
         public static final double SHUFFLER_GEAR_RATIO = 1.25;
 
         public static final double MAX_TRANSLATION_SPEED_METERS = 4.3;
-        public static final double MAX_ANGULAR_SPEED_METERS = 3;
-        public static final double MAX_WHEEL_SPEED_METERS = 4.3;
+        public static final double MAX_ANGULAR_SPEED_METERS = 3.6;
+        public static final double MAX_WHEEL_SPEED_METERS = 4.5;
 
         public static final double MAX_ARM_VELOCITY = 1.5;
-        public static final double MAX_ARM_ACCELERATION = 0.8;
+        public static final double MAX_ARM_ACCELERATION = 1.2;
 
         // -------------------------------------------------
         // CURRENT
@@ -159,7 +183,7 @@ public class Constants {
         public static final double NOMINAL_VOLTAGE = 12; // For Comp saturation
 
         public static final boolean isGyroReversed = true;
-        public static final double GYRO_OFFSET = 0;
+        public static final double GYRO_OFFSET = 180;
 
         // --------------------------------------------------
         // ENCODER OFFSETS
@@ -171,6 +195,18 @@ public class Constants {
         public static final double REAR_RIGHT_OFFSET = 0;
 
         // --------------------------------------------------
+
+        // --------------------------------------------------
+        // ARM POSITIONS
+        // --------------------------------------------------
+        
+        public static double ARM_FRONT_HOLD = -0.6;
+        public static double ARM_STARTING = 1.968;
+        public static double ARM_CUBE_HIGH = 0;
+
+        // --------------------------------------------------
+
+        public static final int INTAKE_PROXIMITY_THRESHOLD = 400;
         
     }
 
