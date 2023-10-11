@@ -1,12 +1,17 @@
 package frc.team9062.robot.Subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team9062.robot.Constants;
@@ -15,6 +20,13 @@ import frc.team9062.robot.Constants.PhysicalConstants;
 
 public class DriveSubsystem extends SubsystemBase{
     private static DriveSubsystem instance;
+
+    public enum DRIVE_STATE {
+      DRIVING,
+      ALIGNING,
+      BALANCING,
+      LOCK
+    }
 
     public static DriveSubsystem getInstance() {
       if(instance == null) {
@@ -61,6 +73,21 @@ public class DriveSubsystem extends SubsystemBase{
     );
 
   private AHRS gyro = new AHRS(SerialPort.Port.kUSB);
+
+  private SwerveDriveOdometry odometry = new SwerveDriveOdometry(
+    Constants.PhysicalConstants.KINEMATIS, 
+    getRotation2d(), 
+    getSwerveModulePositions()
+  );
+
+  private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
+    Constants.PhysicalConstants.KINEMATIS, 
+    getRotation2d(), 
+    getSwerveModulePositions(), 
+    new Pose2d(0, 0, new Rotation2d(0))
+  );
+
+  private Field2d field = new Field2d();
 
   public DriveSubsystem() {
     new Thread(() -> {
@@ -111,6 +138,36 @@ public class DriveSubsystem extends SubsystemBase{
     return gyro.getRoll();
   }
 
+  public double getAngleRate() {
+    return gyro.getRate();
+  }
+
+  public double getXAccelVel() {
+    return gyro.getVelocityX();
+  }
+
+  public double getYAccelVel() {
+    return gyro.getVelocityY();
+  }
+
+  public void updateOdometry() {
+    poseEstimator.update(getRotation2d(), getSwerveModulePositions());
+  }
+
+  public void resetPose(Pose2d pose) {
+    odometry.resetPosition(
+      getRotation2d(), 
+      getSwerveModulePositions(), 
+      pose
+    );
+    
+    poseEstimator.resetPosition(
+      getRotation2d(), 
+      getSwerveModulePositions(), 
+      pose
+    );
+  }
+
   public SwerveModulePosition[] getSwerveModulePositions() {
     SwerveModulePosition frontleft = frontLeft.getModulePosition();
     SwerveModulePosition frontright = frontRight.getModulePosition();
@@ -137,6 +194,12 @@ public class DriveSubsystem extends SubsystemBase{
 
   @Override
   public void periodic() {
+    odometry.update(getRotation2d(), getSwerveModulePositions());
+    updateOdometry();
+
+    field.setRobotPose(poseEstimator.getEstimatedPosition());
+    SmartDashboard.putData("FIELD", field);
+
     SmartDashboard.putNumber("FRONT LEFT ANGLE", Math.toDegrees(frontLeft.getAngle()));
     SmartDashboard.putNumber("FRONT RIGHT ANGLE", Math.toDegrees(frontRight.getAngle()));
     SmartDashboard.putNumber("REAR LEFT ANGLE", Math.toDegrees(rearLeft.getAngle()));
