@@ -15,4 +15,16 @@ public class ControllerBinds {
 
         return instance;
     }
+
+    public boolean CubeIntake() {
+        return io.getOperatorLeftTrigger();
+    }
+
+    public boolean ConeIntake() {
+        return io.getOperatorRightTrigger();
+    }
+
+    public boolean Outtake() {
+        return io.getOperatorXButton();
+    }
 }
