@@ -72,7 +72,7 @@ public class CriticalLED extends SubsystemBase {
     public void setLEDBuffer(Color[] ledArray) {
         try {
             if(ledArray.length != getBufferLength()) {
-                throw new Exception("LENGTH MISMATCH; ARRAY DOES NOT FIT WITH BUFFER LENGTH");
+                throw new Exception("LENGTH MISMATCH: ARRAY DOES NOT FIT WITH BUFFER LENGTH");
             }            
         } catch (Exception e) {
         }
@@ -85,14 +85,14 @@ public class CriticalLED extends SubsystemBase {
     }
 
     /**
-     * Set the colors on the LED
+     * [DEPRECIATED] Set the colors on the LED
      * 
      * @param ledArray [Color8Bit] Array containing values for LED
      */
     public void setLEDBuffer(Color8Bit[] ledArray) {
         try {
             if(ledArray.length != getBufferLength()) {
-                throw new Exception("LENGTH MISMATCH; ARRAY DOES NOT FIT WITH BUFFER LENGTH");
+                throw new Exception("LENGTH MISMATCH: ARRAY DOES NOT FIT WITH BUFFER LENGTH");
             }
         } catch (Exception e) {
         }
@@ -113,7 +113,7 @@ public class CriticalLED extends SubsystemBase {
     public void setLEDBuffer(int[][] ledArray, bufferArrayType kType) {
         try {
             if(ledArray.length != getBufferLength()) {
-                throw new Exception("LENGTH MISMATCH; ARRAY DOES NOT FIT WITH BUFFER LENGTH");
+                throw new Exception("LENGTH MISMATCH: ARRAY DOES NOT FIT WITH BUFFER LENGTH");
             }
         } catch (Exception e) {
         }
@@ -149,6 +149,11 @@ public class CriticalLED extends SubsystemBase {
         }
     }
 
+    /**
+     * Sets the LED Command
+     * 
+     * @param command LEDCommand to be run on the LEDs
+     */
     public void scheduleLEDCommand(LEDCommandBase command) {
         ledManager.setActiveCommand(command);
     }
