@@ -46,11 +46,14 @@ public class SwerveModule extends SubsystemBase{
         turn.setInverted(true);
 
         //drivePID.setSmartMotionMaxVelocity(Constants.PhysicalConstants.MAX_VELOCITY_RPM, 0);
-        drive.setSmartCurrentLimit(40);
-        turn.setSmartCurrentLimit(40);
+        drive.setSmartCurrentLimit(Constants.PhysicalConstants.DRIVE_CURRENT_LIMIT);
+        turn.setSmartCurrentLimit(Constants.PhysicalConstants.TURN_CURRENT_LIMIT);
 
-        driveEncoder.setPositionConversionFactor(Units.inchesToMeters(Constants.PhysicalConstants.DRIVE_GEAR_RATIO * Math.PI * 4));
-        driveEncoder.setVelocityConversionFactor(Units.inchesToMeters(Constants.PhysicalConstants.DRIVE_GEAR_RATIO * Math.PI * 4) / 60);
+        drive.setClosedLoopRampRate(0.1);
+        drive.setOpenLoopRampRate(0.1);
+
+        driveEncoder.setPositionConversionFactor(Units.inchesToMeters(1 / Constants.PhysicalConstants.DRIVE_GEAR_RATIO * Math.PI * 4));
+        driveEncoder.setVelocityConversionFactor(Units.inchesToMeters(1 / Constants.PhysicalConstants.DRIVE_GEAR_RATIO * Math.PI * 4) / 60);
         turnEncoder.setPositionConversionFactor((1 / Constants.PhysicalConstants.TURN_GEAR_RATIO) * Math.PI * 2);
         turnEncoder.setVelocityConversionFactor(((1 / Constants.PhysicalConstants.TURN_GEAR_RATIO) * Math.PI * 2) / 60);
     
@@ -119,11 +122,17 @@ public class SwerveModule extends SubsystemBase{
         canCoder.setPosition(getAbsoluteAngle());
     }
 
-    public void checkEncoder() {
+    public void checkAngle() {
         if(getAngle() > Math.PI) {
             turnEncoder.setPosition(getAngle() - (2 * Math.PI));
         } else if(getAngle() < -Math.PI) {
             turnEncoder.setPosition(getAngle() + (2 * Math.PI));
+        }
+    }
+
+    public void checkEncoder() {
+        if(turnEncoder.getVelocity() < 0.001 && getVelocity() < 0.001) {
+            turnEncoder.setPosition(Math.toRadians(canCoder.getPosition()));
         }
     }
 
@@ -157,6 +166,7 @@ public class SwerveModule extends SubsystemBase{
         //    (velocity / Constants.PhysicalConstants.MAX_WHEEL_SPEED_METERS), 
         //    ControlType.kDutyCycle
         //);
+
         drive.set(velocity / Constants.PhysicalConstants.MAX_WHEEL_SPEED_METERS);
         //turnPID.setReference(moduleangle, ControlType.kPosition);
         setAngle(moduleangle);
@@ -206,6 +216,6 @@ public class SwerveModule extends SubsystemBase{
     @Override
     public void periodic(){
         checkEncoder();
-        
+        checkAngle();
     }
 }
