@@ -4,6 +4,7 @@
 
 package frc.team9062.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -11,6 +12,7 @@ import frc.team9062.robot.Commands.teleopCommand;
 import frc.team9062.robot.Subsystems.ArmSubsystem;
 import frc.team9062.robot.Subsystems.DriveSubsystem;
 import frc.team9062.robot.Utils.CriticalLED.CriticalLED;
+import frc.team9062.robot.Utils.CriticalLED.PresetCommands.fadeColor;
 import frc.team9062.robot.Utils.CriticalLED.PresetCommands.staticColor;
 import frc.team9062.robot.Utils.CriticalLED.PresetCommands.strobeColor;
 
@@ -57,7 +59,15 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    led.scheduleLEDCommand(
+      new strobeColor(
+        led,
+        500,
+        Color.kRed
+      )
+    );
+  }
 
   @Override
   public void disabledPeriodic() {}
