@@ -2,16 +2,30 @@ package frc.team9062.robot.Utils;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import frc.team9062.robot.Constants;
 import frc.team9062.robot.Subsystems.DriveSubsystem;
 
 public class SwerveDriveController {
     private DriveSubsystem driveSubsystem;
+    private ProfiledPIDController thetaController;
 
     public SwerveDriveController() {
         driveSubsystem = DriveSubsystem.getInstance();
+
+        thetaController = new ProfiledPIDController(
+            Constants.TunedConstants.THETA_PID_P, 
+            Constants.TunedConstants.THETA_PID_I, 
+            Constants.TunedConstants.THETA_PID_D, 
+            new Constraints(
+                Constants.TunedConstants.THETA_MAX_VEL, 
+                Constants.TunedConstants.THETA_MAX_ACCEL
+            )
+        );
+        thetaController.enableContinuousInput(-180, 180);
     }
 
     public void drive( DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, boolean isfieldRelative ) {
@@ -38,7 +52,17 @@ public class SwerveDriveController {
         driveSubsystem.OutputModuleInfo(swerveModuleStates);
     }
 
-    public void adjustDynamics() {}
+    public void driveWithHeading(double x, double y, double heading) {
+        double theta = thetaController.calculate(driveSubsystem.getHeading(), heading);
 
-    public void convertToSwerveModuleStates() {}
+        ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            x, y, theta, driveSubsystem.getRotation2d()
+        );
+
+        SwerveModuleState[] swerveModuleStates = Constants.PhysicalConstants.KINEMATIS.toSwerveModuleStates(chassisSpeeds);
+        
+        driveSubsystem.OutputModuleInfo(swerveModuleStates);
+    }
+
+    public void adjustDynamics() {}
 }
