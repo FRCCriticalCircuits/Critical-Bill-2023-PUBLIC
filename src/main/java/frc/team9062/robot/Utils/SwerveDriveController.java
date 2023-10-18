@@ -35,7 +35,7 @@ public class SwerveDriveController {
             ) : 
             new ChassisSpeeds(x.getAsDouble(), y.getAsDouble(), theta.getAsDouble());
 
-        SwerveModuleState[] swerveModuleStates = Constants.PhysicalConstants.KINEMATIS.toSwerveModuleStates(chassisSpeeds);
+        SwerveModuleState[] swerveModuleStates = Constants.PhysicalConstants.KINEMATICS.toSwerveModuleStates(chassisSpeeds);
         
         driveSubsystem.OutputModuleInfo(swerveModuleStates);
     }
@@ -47,22 +47,24 @@ public class SwerveDriveController {
             ) : 
             new ChassisSpeeds(x, y, theta);
 
-        SwerveModuleState[] swerveModuleStates = Constants.PhysicalConstants.KINEMATIS.toSwerveModuleStates(chassisSpeeds);
+        SwerveModuleState[] swerveModuleStates = Constants.PhysicalConstants.KINEMATICS.toSwerveModuleStates(chassisSpeeds);
         
         driveSubsystem.OutputModuleInfo(swerveModuleStates);
     }
 
-    public void driveWithHeading(double x, double y, double heading) {
-        double theta = thetaController.calculate(driveSubsystem.getHeading(), heading);
+    public void driveWithHeading(double x, double y, double targetHeading) {
+        double theta = thetaController.calculate(driveSubsystem.getHeading(), targetHeading);
 
         ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             x, y, theta, driveSubsystem.getRotation2d()
         );
 
-        SwerveModuleState[] swerveModuleStates = Constants.PhysicalConstants.KINEMATIS.toSwerveModuleStates(chassisSpeeds);
+        SwerveModuleState[] swerveModuleStates = Constants.PhysicalConstants.KINEMATICS.toSwerveModuleStates(chassisSpeeds);
         
         driveSubsystem.OutputModuleInfo(swerveModuleStates);
     }
 
-    public void adjustDynamics() {}
+    public void adjustDynamics(ChassisSpeeds desiredSpeeds) {
+        
+    }
 }
