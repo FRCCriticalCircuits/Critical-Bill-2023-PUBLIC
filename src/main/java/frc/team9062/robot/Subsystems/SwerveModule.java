@@ -8,7 +8,9 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -22,6 +24,7 @@ public class SwerveModule extends SubsystemBase{
     private WPI_CANCoder canCoder;
     private SparkMaxPIDController drivePID, turnPID;
     private RelativeEncoder driveEncoder, turnEncoder;
+    private SimpleMotorFeedforward Arbfeedforward;
     //private boolean field_oriented;
     //private PIDController controller = new PIDController(0.003455, 0.000009, 0);
 
@@ -50,7 +53,7 @@ public class SwerveModule extends SubsystemBase{
         turn.setSmartCurrentLimit(Constants.PhysicalConstants.TURN_CURRENT_LIMIT);
 
         drive.setClosedLoopRampRate(0.1);
-        drive.setOpenLoopRampRate(0.1);
+        //drive.setOpenLoopRampRate(0.1);
 
         driveEncoder.setPositionConversionFactor(Units.inchesToMeters(1 / Constants.PhysicalConstants.DRIVE_GEAR_RATIO * Math.PI * 4));
         driveEncoder.setVelocityConversionFactor(Units.inchesToMeters(1 / Constants.PhysicalConstants.DRIVE_GEAR_RATIO * Math.PI * 4) / 60);
@@ -67,6 +70,12 @@ public class SwerveModule extends SubsystemBase{
         drivePID.setI(Constants.TunedConstants.PIDF0_DRIVE_I, 0);
         drivePID.setD(Constants.TunedConstants.PIDF0_DRIVE_D, 0);
         drivePID.setFF(Constants.TunedConstants.PIDF0_DRIVE_F, 0);
+
+        Arbfeedforward = new SimpleMotorFeedforward(
+            Constants.TunedConstants.FEED_DRIVE_KS, 
+            Constants.TunedConstants.FEED_DRIVE_KV,
+            Constants.TunedConstants.FEED_DRIVE_KA
+        );
 
         turnPID.setP(Constants.TunedConstants.PIDF0_TURN_P, 0);
         turnPID.setI(Constants.TunedConstants.PIDF0_TURN_I, 0);
@@ -131,7 +140,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void checkEncoder() {
-        if(turnEncoder.getVelocity() < 0.001 && getVelocity() < 0.001) {
+        if(Math.abs(turnEncoder.getVelocity()) < 0.001 && Math.abs(getVelocity()) < 0.001) {
             turnEncoder.setPosition(Math.toRadians(canCoder.getPosition()));
         }
     }
@@ -162,14 +171,17 @@ public class SwerveModule extends SubsystemBase{
         double velocity = desiredState.speedMetersPerSecond;
         double moduleangle = desiredState.angle.getRadians();
         //drivePID.setReference(velocity, ControlType.kVelocity);
-        //drivePID.setReference(
-        //    (velocity / Constants.PhysicalConstants.MAX_WHEEL_SPEED_METERS), 
-        //    ControlType.kDutyCycle
-        //);
+        drivePID.setReference(
+            velocity, 
+            ControlType.kVelocity,
+            0,
+            Arbfeedforward.calculate(velocity),
+            ArbFFUnits.kVoltage
+        );
 
-        drive.set(velocity / Constants.PhysicalConstants.MAX_WHEEL_SPEED_METERS);
-        //turnPID.setReference(moduleangle, ControlType.kPosition);
-        setAngle(moduleangle);
+        //drive.set(velocity / Constants.PhysicalConstants.MAX_WHEEL_SPEED_METERS);
+        turnPID.setReference(moduleangle, ControlType.kPosition);
+        //setAngle(moduleangle);
 
         //SmartDashboard.getNumber("TARGET ANGLE " + canCoder.getDeviceID() / 3, moduleangle);
         //SmartDashboard.getNumber("ANGLE " + canCoder.getDeviceID() / 3, moduleangle);
@@ -215,7 +227,7 @@ public class SwerveModule extends SubsystemBase{
     
     @Override
     public void periodic(){
-        checkEncoder();
+        //checkEncoder();
         checkAngle();
     }
 }
