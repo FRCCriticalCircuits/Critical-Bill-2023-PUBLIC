@@ -51,16 +51,21 @@ public class teleopCommand extends CommandBase{
       
       if(manualArmControl) {
         armSubsystem.setArm(-io.getOperatorLeftY());
+        armSubsystem.setCurrentArmState(ARM_STATE.MANUAL);
       }
 
       if(binds.setArmStowed()) {
         armSubsystem.setCurrentArmState(ARM_STATE.HOLD);
         manualArmControl = false;
       } else if(binds.setArmHigh()) {
-        armSubsystem.setCurrentArmState(ARM_STATE.CUBE_HIGH);
+        armSubsystem.setCurrentArmState(ARM_STATE.HIGH);
         manualArmControl = false;
       } else if(binds.setArmMid()) {
-        
+        armSubsystem.setCurrentArmState(ARM_STATE.MID);
+        manualArmControl = false;
+      } else if(binds.setArmDoubleSub()) {
+        armSubsystem.setCurrentArmState(ARM_STATE.DOUBLE_SUB);
+        manualArmControl = false;
       }
 
       armSubsystem.setShoulder(io.getOperatorRightY());
