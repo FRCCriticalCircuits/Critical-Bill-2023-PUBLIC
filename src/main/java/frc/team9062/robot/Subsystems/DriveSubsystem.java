@@ -75,13 +75,13 @@ public class DriveSubsystem extends SubsystemBase{
   private AHRS gyro = new AHRS(SerialPort.Port.kUSB);
 
   private SwerveDriveOdometry odometry = new SwerveDriveOdometry(
-    Constants.PhysicalConstants.KINEMATIS, 
+    Constants.PhysicalConstants.KINEMATICS, 
     getRotation2d(), 
     getSwerveModulePositions()
   );
 
   private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
-    Constants.PhysicalConstants.KINEMATIS, 
+    Constants.PhysicalConstants.KINEMATICS, 
     getRotation2d(), 
     getSwerveModulePositions(), 
     new Pose2d(0, 0, new Rotation2d(0))
@@ -118,6 +118,18 @@ public class DriveSubsystem extends SubsystemBase{
     rearRight.resetEncoder();
   }
 
+  public void setXWheel() {
+    SwerveModuleState frontLeft = new SwerveModuleState(0, Rotation2d.fromDegrees(-45));
+    SwerveModuleState frontright = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
+    SwerveModuleState rearleft = new SwerveModuleState(0, Rotation2d.fromDegrees(-135));
+    SwerveModuleState rearright = new SwerveModuleState(0, Rotation2d.fromDegrees(135));
+
+    SwerveModuleState[] states = {frontLeft, frontright, rearleft, rearright};
+
+    OutputModuleInfo(states);
+  }
+
+
   public void resetHeading() {
     gyro.zeroYaw();
   }
@@ -130,6 +142,10 @@ public class DriveSubsystem extends SubsystemBase{
     return Rotation2d.fromDegrees(getHeading());
   }
 
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
+
   public double getPitch() {
     return gyro.getPitch();
   }
@@ -138,7 +154,7 @@ public class DriveSubsystem extends SubsystemBase{
     return gyro.getRoll();
   }
 
-  public double getAngleRate() {
+  public double getGyroRate() {
     return gyro.getRate();
   }
 
@@ -180,7 +196,7 @@ public class DriveSubsystem extends SubsystemBase{
   }
 
   public void OutputModuleInfo(SwerveModuleState[] states) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, PhysicalConstants.MAX_WHEEL_SPEED_METERS);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.PhysicalConstants.MAX_WHEEL_SPEED_METERS);
 
     frontLeft.setState(states[0]);
     frontRight.setState(states[1]);
@@ -189,7 +205,9 @@ public class DriveSubsystem extends SubsystemBase{
   }
 
   public void OutputChassisSpeeds(ChassisSpeeds speeds) {
-    OutputModuleInfo(PhysicalConstants.KINEMATIS.toSwerveModuleStates(speeds));
+    SwerveModuleState[] states = Constants.PhysicalConstants.KINEMATICS.toSwerveModuleStates(speeds);
+
+    OutputModuleInfo(states);
   }
 
   @Override
@@ -200,10 +218,10 @@ public class DriveSubsystem extends SubsystemBase{
     field.setRobotPose(poseEstimator.getEstimatedPosition());
     SmartDashboard.putData("FIELD", field);
 
-    SmartDashboard.putNumber("FRONT LEFT ANGLE", Math.toDegrees(frontLeft.getAngle()));
-    SmartDashboard.putNumber("FRONT RIGHT ANGLE", Math.toDegrees(frontRight.getAngle()));
-    SmartDashboard.putNumber("REAR LEFT ANGLE", Math.toDegrees(rearLeft.getAngle()));
-    SmartDashboard.putNumber("REAR RIGHT ANGLE", Math.toDegrees(rearRight.getAngle()));
+    //SmartDashboard.putNumber("FRONT LEFT ANGLE", Math.toDegrees(frontLeft.getAngle()));
+    //SmartDashboard.putNumber("FRONT RIGHT ANGLE", Math.toDegrees(frontRight.getAngle()));
+    //SmartDashboard.putNumber("REAR LEFT ANGLE", Math.toDegrees(rearLeft.getAngle()));
+    //SmartDashboard.putNumber("REAR RIGHT ANGLE", Math.toDegrees(rearRight.getAngle()));
 
     SmartDashboard.putNumber("ANGLE", getHeading());
   }
