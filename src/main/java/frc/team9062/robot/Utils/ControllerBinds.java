@@ -36,23 +36,15 @@ public class ControllerBinds {
     }
 
     public boolean setArmHigh() {
-        return io.getOperatorRightBumper() && io.getOperatorYButton();
+        return io.getOperatorYButton();
     }
 
     public boolean setArmMid() {
-        return io.getOperatorRightBumper() && io.getOperatorXButton();
+        return io.getOperatorBButton();
     }
 
-    public boolean setArmLow() {
-        return io.getOperatorRightBumper() && io.getOperatorAButton();
-    }
-
-    public boolean setArmHighInverted() {
-        return io.getOperatorLeftBumper() && io.getOperatorYButton();
-    }
-
-    public boolean setArmMidInverted() {
-        return io.getOperatorLeftBumper() && io.getOperatorXButton();
+    public boolean setArmDoubleSub() {
+        return io.getOperatorLeftBumper();
     }
 
     public boolean resetHeading() {
