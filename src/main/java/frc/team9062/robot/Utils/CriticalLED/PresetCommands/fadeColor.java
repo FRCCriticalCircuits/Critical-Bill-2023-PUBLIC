@@ -32,12 +32,10 @@ public class fadeColor extends LEDCommandBase{
             r = color.red;
             g = color.green;
             b = color.blue;
-
         } else {
             r = RGB[0];
             g = RGB[1];
             b = RGB[2];
-
         }
 
         double maxColor = Math.max(r, Math.max(g, b));
@@ -62,7 +60,7 @@ public class fadeColor extends LEDCommandBase{
     @Override
     public void command() {
         for(int counter = 0; counter < this.led.getBufferLength(); counter++) {
-            BufferArray[counter][0] = (int) hue;
+            BufferArray[counter][0] = (int) (hue);
             BufferArray[counter][1] = 255;
             BufferArray[counter][2] = (int) value;
         }
