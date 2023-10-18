@@ -1,5 +1,7 @@
 package frc.team9062.robot.Subsystems;
 
+import java.util.HashMap;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
@@ -31,8 +33,9 @@ public class ArmSubsystem extends SubsystemBase{
     private ColorSensorV3 colorSensor;
     private TalonSRX shoulder;
     private BangBangController cubeIntakeController;
-    private boolean hasObject = false;
-
+    //private boolean hasObject = false;
+    private ARM_STATE currentArmState;
+    
     public static ArmSubsystem getInstance() {
         if(instance == null) {
             instance = new ArmSubsystem();
@@ -41,7 +44,7 @@ public class ArmSubsystem extends SubsystemBase{
         return instance;
     }
 
-    public enum ARMPOSITION {
+    public enum ARM_STATE {
         CONE_HIGH,
         CONE_MID,
         CUBE_HIGH,
@@ -49,15 +52,26 @@ public class ArmSubsystem extends SubsystemBase{
         INVERTED_HIGH,
         INVERTED_MID,
         LOW,
+        DOUBLE_SUB,
+        INVERTED_DOUBLE_SUB,
         HOLD,
+        STARTING,
+        MANUAL
     }
 
-    public enum SHOULDERPOSITIONS {
-        FULL_BACK,
+    public enum SHOULDER_POSITIONS {
+        STARTING,
         UPRIGHT,
-        PART_FORWARD,
-        FULL_FORWARD
+        FORWARD
     }
+
+    public enum INTAKE_STATES {
+        INTAKING,
+        HOLDING,
+        IDLE
+    }
+
+    private HashMap<ARM_STATE, Double> armMap = new HashMap<>();
 
     public ArmSubsystem() {
         cubeIntakeController = new BangBangController();
@@ -92,11 +106,11 @@ public class ArmSubsystem extends SubsystemBase{
         intake.configNeutralDeadband(0.04);
 
         armPID.setSmartMotionMaxVelocity(Constants.PhysicalConstants.MAX_ARM_VELOCITY, 0);
-        //armPID.setSmartMotionMaxAccel(Constants.PhysicalConstants.MAX_ARM_ACCELERATION, 0);
+        armPID.setSmartMotionMaxAccel(Constants.PhysicalConstants.MAX_ARM_ACCELERATION, 0);
 
         armEncoder.setPositionConversionFactor(1 / Constants.PhysicalConstants.ARM_GEAR_RATIO * Math.PI * 2);
         armEncoder.setVelocityConversionFactor((1 / Constants.PhysicalConstants.ARM_GEAR_RATIO * Math.PI * 2) / 60);
-        armEncoder.setPosition(0);
+        armEncoder.setPosition(Constants.PhysicalConstants.ARM_STARTING);
 
         armPID.setP(Constants.TunedConstants.PIDF0_ARM_P, 0);
         armPID.setI(Constants.TunedConstants.PIDF0_ARM_I, 0);
@@ -120,6 +134,19 @@ public class ArmSubsystem extends SubsystemBase{
 
         arm.burnFlash();
         arm_follower.burnFlash();
+
+        // Map arm states to their positions
+        armMap.put(ARM_STATE.STARTING, Constants.PhysicalConstants.ARM_STARTING);
+        armMap.put(ARM_STATE.CONE_HIGH, null);
+        armMap.put(ARM_STATE.CONE_MID, null);
+        armMap.put(ARM_STATE.CUBE_HIGH, Constants.PhysicalConstants.ARM_CUBE_HIGH);
+        armMap.put(ARM_STATE.CUBE_MID, null);
+        armMap.put(ARM_STATE.INVERTED_HIGH, null);
+        armMap.put(ARM_STATE.INVERTED_MID, null);
+        armMap.put(ARM_STATE.DOUBLE_SUB, null);
+        armMap.put(ARM_STATE.INVERTED_DOUBLE_SUB, null);
+        armMap.put(ARM_STATE.LOW, null);
+        armMap.put(ARM_STATE.HOLD, Constants.PhysicalConstants.ARM_STOWED);
     }
 
     public void setArm(double percentOutput) {
@@ -135,7 +162,7 @@ public class ArmSubsystem extends SubsystemBase{
         intake.set(VictorSPXControlMode.PercentOutput, percentOutput);
     }
 
-    public void setCubeIntake() { //Todo: Figure out where the first proximity should be
+    public void setCubeIntake() {
         double percentOutput = cubeIntakeController.calculate(getSensorProximity(), Constants.PhysicalConstants.INTAKE_PROXIMITY_THRESHOLD) == 1 ? 0.2 : 0;
         intake.set(VictorSPXControlMode.PercentOutput, percentOutput);
     }
@@ -148,16 +175,19 @@ public class ArmSubsystem extends SubsystemBase{
         armPID.setReference(
             angleRad, 
             ControlType.kSmartMotion, 
-            0, 
-            feedforward.calculate(angleRad, 2), 
-            ArbFFUnits.kVoltage
+            0
+            //feedforward.calculate(angleRad, 0), 
+            //ArbFFUnits.kVoltage
         );
     }
 
     public void setArmPosition(double angleRad) {
         armPID.setReference(
             angleRad, 
-            ControlType.kPosition
+            ControlType.kPosition,
+            0,
+            feedforward.calculate(angleRad, 0),
+            ArbFFUnits.kVoltage
         );
     }
 
@@ -168,8 +198,14 @@ public class ArmSubsystem extends SubsystemBase{
         );
     }
 
-    public void handleArmStates() {
+    public void setCurrentArmState(ARM_STATE state) {
+        currentArmState = state;
+    }
 
+    public void handleArmStates() {
+        if(currentArmState != null && currentArmState != ARM_STATE.MANUAL) {
+            setArmPositionSmartMotion(armMap.get(currentArmState));
+        }
     }
 
     public double getArmPosition() {
@@ -188,8 +224,12 @@ public class ArmSubsystem extends SubsystemBase{
         return Math.toRadians(armEncoder.getVelocity());
     }
 
+    public double getShoulderPosition() {
+        return shoulder.getSelectedSensorPosition();
+    }
+
     public boolean hasObject() {
-        return getSensorProximity() > 3000;
+        return getSensorProximity() > 400;
     }
 
     public Color getSensorColor() {
@@ -223,5 +263,8 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumberArray("Detected Color", getSensorRGB());
         SmartDashboard.putNumber("ARM ANGLE", armEncoder.getPosition());
         SmartDashboard.putNumber("SENSOR PROXITY", getSensorProximity());
+        SmartDashboard.putNumber("SHOULDER POSITION", getShoulderPosition());
+        
+        handleArmStates();
     }
  }
