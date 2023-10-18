@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     autoChooser.addOption("TEST AUTO", new TestAuto().testAutoCommand());
-    autoChooser.addOption("Middle Taxi", new MiddleTaxi(led).middleTaxiCommand());
+    autoChooser.addOption("Middle Taxi", null);
 
     SmartDashboard.putData("AUTO SELECTION", autoChooser);
     
