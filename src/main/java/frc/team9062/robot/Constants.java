@@ -24,23 +24,18 @@ public class Constants {
         public static final int FRONT_LEFT_FORWARD_ID = 1;
         public static final int FRONT_LEFT_ROTATION_ID = 2;
         public static final int FRONT_LEFT_CANCODER_ID = 3;
-        public static final double FRONT_LEFT_OFFSET = 56.6 - 114;
     
         public static final int FRONT_RIGHT_FORWARD_ID = 4;
         public static final int FRONT_RIGHT_ROTATION_ID = 5;
         public static final int FRONT_RIGHT_CANCODER_ID = 6;
-        public static final double FRONT_RIGHT_OFFSET = -64.893 + 129;
     
         public static final int REAR_LEFT_FORWARD_ID = 7;
         public static final int REAR_LEFT_ROTATION_ID = 8;
         public static final int REAR_LEFT_CANCODER_ID = 9;
-        public static final double REAR_LEFT_OFFSET = -65 + 130;
     
         public static final int REAR_RIGHT_FORWARD_ID = 10;
         public static final int REAR_RIGHT_ROTATION_ID = 11;
-        public static final int REAR_RIGHT_CANCODER_ID = 12;
-        public static final double REAR_RIGHT_OFFSET = -50 - 104;
-    
+        public static final int REAR_RIGHT_CANCODER_ID = 12;    
 
         // -----------------------------------------------
 
@@ -56,10 +51,6 @@ public class Constants {
 
         public static final int SHOULDER = 18;
 
-        public static final int SHUFFLER_ARM = 20;
-        public static final int SHUFFLER_INTAKE_LEFT = 21;
-        public static final int SHUFFLER_INTAKE_RIGHT = 22;
-
         // ------------------------------------------------
 
         public static final int LIMELIGHT_SERVO = 0;
@@ -72,14 +63,14 @@ public class Constants {
         // DRIVE
         // ------------------------------------------------
 
-        public static final double PIDF0_DRIVE_P = 0; // Previously 0.003405
+        public static final double PIDF0_DRIVE_P = 4.497E-06; // Previously 0.003405
         public static final double PIDF0_DRIVE_I = 0;
         public static final double PIDF0_DRIVE_D = 0;
         public static final double PIDF0_DRIVE_F = 0; // Previously 0.315
 
-        public static final double FEED_DRIVE_KV = 0;
-        public static final double FEED_DRIVE_KS = 0;
-        public static final double FEED_DRIVE_KA = 0;
+        public static final double FEED_DRIVE_KV = 2.3854; // 2.3854
+        public static final double FEED_DRIVE_KS = 0.15778;
+        public static final double FEED_DRIVE_KA = 0.41036;
 
         public static final double PIDF0_TURN_P = 0.292;
         public static final double PIDF0_TURN_I = 0;
@@ -92,7 +83,7 @@ public class Constants {
         // ARM
         // ------------------------------------------------
 
-        public static final double PIDF0_ARM_P = 0;
+        public static final double PIDF0_ARM_P = 1;
         public static final double PIDF0_ARM_I = 0;
         public static final double PIDF0_ARM_D = 0;
         public static final double PIDF0_ARM_F = 0;
@@ -101,15 +92,6 @@ public class Constants {
         public static final double FEED_ARM_KS = 0;
         public static final double FEED_ARM_KA = 0;
         public static final double FEED_ARM_KG = 0;
-
-        public static final double PID0_SHUFFLER_P = 0;
-        public static final double PID0_SHUFFLER_I = 0;
-        public static final double PID0_SHUFFLER_D = 0;
-
-        public static final double FEED_SHUFFLER_KV = 0;
-        public static final double FEED_SHUFFLER_KS = 0;
-        public static final double FEED_SHUFFLER_KA = 0;
-        public static final double FEED_SHUFFLER_KG = 0;
 
         // -------------------------------------------------
 
@@ -127,6 +109,24 @@ public class Constants {
 
         // -------------------------------------------------
 
+        // -------------------------------------------------
+        // AUTO CONSTANTS
+        // -------------------------------------------------
+
+        public static final double AUTO_PID_X_P = 1;
+        public static final double AUTO_PID_X_I = 0;
+        public static final double AUTO_PID_X_D = 0;
+
+        public static final double AUTO_PID_Y_P = 0;
+        public static final double AUTO_PID_Y_I = 0;
+        public static final double AUTO_PID_Y_D = 0;
+
+        public static final double AUTO_PID_THETA_P = 1;
+        public static final double AUTO_PID_THETA_I = 0;
+        public static final double AUTO_PID_THETA_D = 0;
+
+        // -------------------------------------------------
+
         public static final double THETA_PID_P = 0;
         public static final double THETA_PID_I = 0;
         public static final double THETA_PID_D = 0;
@@ -138,7 +138,7 @@ public class Constants {
         public static final double TRACK_WIDTH = 24 - 2.625; // Square Base, so no track length needed
         public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(TRACK_WIDTH);
 
-        public final static SwerveDriveKinematics KINEMATIS = new SwerveDriveKinematics(
+        public final static SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
             new Translation2d((TRACK_WIDTH_METERS / 2), (TRACK_WIDTH_METERS / 2)),
             new Translation2d((TRACK_WIDTH_METERS / 2), -(TRACK_WIDTH_METERS / 2)),
             new Translation2d(-(TRACK_WIDTH_METERS / 2), (TRACK_WIDTH_METERS / 2)),
@@ -151,7 +151,7 @@ public class Constants {
         public static final double DRIVE_GEAR_RATIO = 6.12;
         public static final double TURN_GEAR_RATIO = 150 / 7;
 
-        public static final double ARM_GEAR_RATIO = 480; // Larger Tooth: 480, Smaller Tooth: 240
+        public static final double ARM_GEAR_RATIO = 180; // Larger Tooth: 480, Smaller Tooth: 240
 
         public static final double SHUFFLER_GEAR_RATIO = 1.25;
 
@@ -159,8 +159,8 @@ public class Constants {
         public static final double MAX_ANGULAR_SPEED_METERS = 3.6;
         public static final double MAX_WHEEL_SPEED_METERS = 4.5;
 
-        public static final double MAX_ARM_VELOCITY = 1.5;
-        public static final double MAX_ARM_ACCELERATION = 1.2;
+        public static final double MAX_ARM_VELOCITY = 0.5;
+        public static final double MAX_ARM_ACCELERATION = 0.2;
 
         // -------------------------------------------------
         // CURRENT
@@ -200,8 +200,8 @@ public class Constants {
         // ARM POSITIONS
         // --------------------------------------------------
         
-        public static double ARM_FRONT_HOLD = -0.6;
-        public static double ARM_STARTING = 1.968;
+        public static double ARM_STOWED = -1.3;
+        public static double ARM_STARTING = 3.9;
         public static double ARM_CUBE_HIGH = 0;
 
         // --------------------------------------------------
