@@ -18,6 +18,7 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.BangBangController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,15 +46,9 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public enum ARM_STATE {
-        CONE_HIGH,
-        CONE_MID,
-        CUBE_HIGH,
-        CUBE_MID,
-        INVERTED_HIGH,
-        INVERTED_MID,
-        LOW,
+        HIGH,
+        MID,
         DOUBLE_SUB,
-        INVERTED_DOUBLE_SUB,
         HOLD,
         STARTING,
         MANUAL
@@ -137,15 +132,9 @@ public class ArmSubsystem extends SubsystemBase{
 
         // Map arm states to their positions
         armMap.put(ARM_STATE.STARTING, Constants.PhysicalConstants.ARM_STARTING);
-        armMap.put(ARM_STATE.CONE_HIGH, null);
-        armMap.put(ARM_STATE.CONE_MID, null);
-        armMap.put(ARM_STATE.CUBE_HIGH, Constants.PhysicalConstants.ARM_CUBE_HIGH);
-        armMap.put(ARM_STATE.CUBE_MID, null);
-        armMap.put(ARM_STATE.INVERTED_HIGH, null);
-        armMap.put(ARM_STATE.INVERTED_MID, null);
-        armMap.put(ARM_STATE.DOUBLE_SUB, null);
-        armMap.put(ARM_STATE.INVERTED_DOUBLE_SUB, null);
-        armMap.put(ARM_STATE.LOW, null);
+        armMap.put(ARM_STATE.HIGH, Constants.PhysicalConstants.ARM_HIGH);
+        armMap.put(ARM_STATE.MID, Constants.PhysicalConstants.ARM_MID);
+        armMap.put(ARM_STATE.DOUBLE_SUB, Constants.PhysicalConstants.ARM_DOUBLE_SUB);
         armMap.put(ARM_STATE.HOLD, Constants.PhysicalConstants.ARM_STOWED);
     }
 
@@ -185,9 +174,7 @@ public class ArmSubsystem extends SubsystemBase{
         armPID.setReference(
             angleRad, 
             ControlType.kPosition,
-            0,
-            feedforward.calculate(angleRad, 0),
-            ArbFFUnits.kVoltage
+            0
         );
     }
 
