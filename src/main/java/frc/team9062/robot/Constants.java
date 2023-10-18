@@ -83,15 +83,15 @@ public class Constants {
         // ARM
         // ------------------------------------------------
 
-        public static final double PIDF0_ARM_P = 1;
+        public static final double PIDF0_ARM_P = 0.5; //2.4613E-08;
         public static final double PIDF0_ARM_I = 0;
-        public static final double PIDF0_ARM_D = 0;
+        public static final double PIDF0_ARM_D = 0; //1.555E-08;
         public static final double PIDF0_ARM_F = 0;
 
-        public static final double FEED_ARM_KV = 0;
-        public static final double FEED_ARM_KS = 0;
-        public static final double FEED_ARM_KA = 0;
-        public static final double FEED_ARM_KG = 0;
+        public static final double FEED_ARM_KV = 0.061997;
+        public static final double FEED_ARM_KS = 0.066919;
+        public static final double FEED_ARM_KA = 0.0031346;
+        public static final double FEED_ARM_KG = 0.16969;
 
         // -------------------------------------------------
 
@@ -159,8 +159,8 @@ public class Constants {
         public static final double MAX_ANGULAR_SPEED_METERS = 3.6;
         public static final double MAX_WHEEL_SPEED_METERS = 4.5;
 
-        public static final double MAX_ARM_VELOCITY = 0.5;
-        public static final double MAX_ARM_ACCELERATION = 0.2;
+        public static final double MAX_ARM_VELOCITY = 4.25;
+        public static final double MAX_ARM_ACCELERATION = 2.25;
 
         // -------------------------------------------------
         // CURRENT
@@ -202,7 +202,9 @@ public class Constants {
         
         public static double ARM_STOWED = -1.3;
         public static double ARM_STARTING = 3.9;
-        public static double ARM_CUBE_HIGH = 0;
+        public static double ARM_HIGH = 0.51;
+        public static double ARM_MID = 0.06;
+        public static double ARM_DOUBLE_SUB = 0.4;
 
         // --------------------------------------------------
 
