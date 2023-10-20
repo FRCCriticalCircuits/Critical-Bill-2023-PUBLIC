@@ -4,27 +4,24 @@
 
 package frc.team9062.robot;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.team9062.robot.Autos.MiddleTaxi;
-import frc.team9062.robot.Autos.TestAuto;
 import frc.team9062.robot.Commands.teleopCommand;
 import frc.team9062.robot.Subsystems.ArmSubsystem;
 import frc.team9062.robot.Subsystems.DriveSubsystem;
 import frc.team9062.robot.Utils.CriticalLED.CriticalLED;
-import frc.team9062.robot.Utils.CriticalLED.PresetCommands.staticColor;
-import frc.team9062.robot.Utils.CriticalLED.PresetCommands.strobeColor;
 
 public class Robot extends TimedRobot {
   private DriveSubsystem driveSubsystem;
   private ArmSubsystem armSubsystem;
   private teleopCommand teleopCommand;
   private CriticalLED led;
-  private SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private SendableChooser<String> autoChooser = new SendableChooser<>();
 
   public Robot() {
     super(kDefaultPeriod);
@@ -43,10 +40,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    autoChooser.addOption("TEST AUTO", new TestAuto().testAutoCommand());
-    autoChooser.addOption("Middle Taxi", null);
+    autoChooser.addOption("TEST TAXI", "Test Taxi");
+    autoChooser.addOption("Middle Taxi", "Middle Taxi");
+    autoChooser.addOption("Clearside Taxi", "Clearside Taxi");
+    autoChooser.addOption("Bumpside Taxi", "BumpSide Taxi");
 
-    SmartDashboard.putData("AUTO SELECTION", autoChooser);
+    SmartDashboard.putData("AUTO SELECTOR", autoChooser);
     
     driveSubsystem.setDefaultCommand(
       teleopCommand
@@ -56,6 +55,9 @@ public class Robot extends TimedRobot {
       teleopCommand
     );
 
+    armSubsystem.setArmBrake(false);
+
+    /* 
     led.scheduleLEDCommand(
       new strobeColor(
         led,
@@ -63,6 +65,7 @@ public class Robot extends TimedRobot {
         Color.kRed
       )
     );
+    */
   }
 
   @Override
@@ -72,6 +75,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+
+    /*
     led.scheduleLEDCommand(
       new strobeColor(
         led,
@@ -79,6 +84,7 @@ public class Robot extends TimedRobot {
         Color.kRed
       )
     );
+    */
   }
 
   @Override
@@ -89,7 +95,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    Command autoCommand = autoChooser.getSelected();
+    armSubsystem.setArmBrake(true);
+
+    Command autoCommand = new PathPlannerAuto(autoChooser.getSelected());
     if(autoCommand != null) {
       autoCommand.schedule();
     }
@@ -103,13 +111,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    armSubsystem.setArmBrake(true);
+
     CommandScheduler.getInstance().schedule(teleopCommand);
+
+    /*
     led.scheduleLEDCommand(
       new staticColor(
         led, 
         Color.kGreen
       )
     );
+    */
   }
 
   @Override
