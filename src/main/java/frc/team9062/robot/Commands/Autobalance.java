@@ -4,11 +4,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team9062.robot.Constants;
-import frc.team9062.robot.Robot;
 import frc.team9062.robot.Subsystems.DriveSubsystem;
 import frc.team9062.robot.Utils.SwerveDriveController;
 import frc.team9062.robot.Utils.CriticalLED.CriticalLED;
-import frc.team9062.robot.Utils.CriticalLED.PresetCommands.staticColor;
 import frc.team9062.robot.Utils.CriticalLED.PresetCommands.strobeColor;
 
 public class Autobalance extends CommandBase{
@@ -45,6 +43,7 @@ public class Autobalance extends CommandBase{
 
     @Override
     public void initialize() {
+        /* 
         led.scheduleLEDCommand(
             new strobeColor(
                 led, 
@@ -52,6 +51,7 @@ public class Autobalance extends CommandBase{
                 Color.kYellow
             )
         );
+        */
     }
 
     @Override
@@ -85,12 +85,14 @@ public class Autobalance extends CommandBase{
                 if(stage2Controller.atSetpoint()) {
                     driveSubsystem.setXWheel();
 
+                /* 
                     led.scheduleLEDCommand(
                         new staticColor(
                             led, 
                             Color.kGreen
                         )
                     );
+                */
                 }
             }
         }
