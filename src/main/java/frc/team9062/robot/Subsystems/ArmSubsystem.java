@@ -18,25 +18,26 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.BangBangController;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team9062.robot.Constants;
+import frc.team9062.robot.Utils.GamePiece;
+import frc.team9062.robot.Utils.RobotGameState;
 
 public class ArmSubsystem extends SubsystemBase{
     private static ArmSubsystem instance;
     private CANSparkMax arm, arm_follower;
     private SparkMaxPIDController armPID;
     private RelativeEncoder armEncoder;
-    private ArmFeedforward feedforward;
+    private ArmFeedforward Arbfeedforward;
     private VictorSPX intake;
     private ColorSensorV3 colorSensor;
     private TalonSRX shoulder;
-    private BangBangController cubeIntakeController;
-    //private boolean hasObject = false;
+    private BangBangController intakeBangBang;
     private ARM_STATE currentArmState;
-    
+    private INTAKE_STATE currentIntakeState = INTAKE_STATE.IDLE;
+
     public static ArmSubsystem getInstance() {
         if(instance == null) {
             instance = new ArmSubsystem();
@@ -54,13 +55,7 @@ public class ArmSubsystem extends SubsystemBase{
         MANUAL
     }
 
-    public enum SHOULDER_POSITIONS {
-        STARTING,
-        UPRIGHT,
-        FORWARD
-    }
-
-    public enum INTAKE_STATES {
+    public enum INTAKE_STATE {
         INTAKING,
         HOLDING,
         IDLE
@@ -69,7 +64,7 @@ public class ArmSubsystem extends SubsystemBase{
     private HashMap<ARM_STATE, Double> armMap = new HashMap<>();
 
     public ArmSubsystem() {
-        cubeIntakeController = new BangBangController();
+        intakeBangBang = new BangBangController();
 
         arm = new CANSparkMax(Constants.IDs.ARM, MotorType.kBrushless);
         arm_follower = new CANSparkMax(Constants.IDs.ARM_FOLLOWER, MotorType.kBrushless);
@@ -87,8 +82,8 @@ public class ArmSubsystem extends SubsystemBase{
         arm.setSmartCurrentLimit(Constants.PhysicalConstants.ARM_CURRENT_LIMIT);
         arm_follower.setSmartCurrentLimit(Constants.PhysicalConstants.ARM_CURRENT_LIMIT);
 
-        //arm.setClosedLoopRampRate(0.1);
-        //arm_follower.setClosedLoopRampRate(0.1);
+        arm.setClosedLoopRampRate(0.1);
+        arm_follower.setClosedLoopRampRate(0.1);
 
         shoulder.configVoltageCompSaturation(Constants.PhysicalConstants.NOMINAL_VOLTAGE);
         intake.configVoltageCompSaturation(Constants.PhysicalConstants.NOMINAL_VOLTAGE);
@@ -98,7 +93,7 @@ public class ArmSubsystem extends SubsystemBase{
         intake.enableVoltageCompensation(true);
         shoulder.enableVoltageCompensation(true);
 
-        intake.configNeutralDeadband(0.04);
+        intake.configNeutralDeadband(0.02);
 
         armPID.setSmartMotionMaxVelocity(Constants.PhysicalConstants.MAX_ARM_VELOCITY, 0);
         armPID.setSmartMotionMaxAccel(Constants.PhysicalConstants.MAX_ARM_ACCELERATION, 0);
@@ -112,7 +107,12 @@ public class ArmSubsystem extends SubsystemBase{
         armPID.setD(Constants.TunedConstants.PIDF0_ARM_D, 0);
         armPID.setFF(Constants.TunedConstants.PIDF0_ARM_F, 0);
 
-        feedforward = new ArmFeedforward(
+        armPID.setP(Constants.TunedConstants.PIDF1_ARM_P, 1);
+        armPID.setI(Constants.TunedConstants.PIDF1_ARM_I, 1);
+        armPID.setD(Constants.TunedConstants.PIDF1_ARM_D, 1);
+        armPID.setFF(Constants.TunedConstants.PIDF1_ARM_F, 1);
+
+        Arbfeedforward = new ArmFeedforward(
             Constants.TunedConstants.FEED_ARM_KS, 
             Constants.TunedConstants.FEED_ARM_KG, 
             Constants.TunedConstants.FEED_ARM_KV,
@@ -147,13 +147,19 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public void setConeIntake() {
-        double percentOutput = getSensorProximity() >= Constants.PhysicalConstants.INTAKE_PROXIMITY_THRESHOLD ? 0 : 0.2;
-        intake.set(VictorSPXControlMode.PercentOutput, percentOutput);
+        if(objectDetected()) {
+            RobotGameState.getInstance().setActiveGamePieve(GamePiece.CONE);
+        } else {
+            intake.set(VictorSPXControlMode.PercentOutput, 0.2);
+        }
     }
 
     public void setCubeIntake() {
-        double percentOutput = cubeIntakeController.calculate(getSensorProximity(), Constants.PhysicalConstants.INTAKE_PROXIMITY_THRESHOLD) == 1 ? 0.2 : 0;
-        intake.set(VictorSPXControlMode.PercentOutput, percentOutput);
+        if(objectDetected()) {
+            RobotGameState.getInstance().setActiveGamePieve(GamePiece.CUBE);
+        } else {
+            intake.set(VictorSPXControlMode.PercentOutput, 0.2);
+        }
     }
 
     public void setShoulder(double percentOutput) {
@@ -174,7 +180,9 @@ public class ArmSubsystem extends SubsystemBase{
         armPID.setReference(
             angleRad, 
             ControlType.kPosition,
-            0
+            1,
+            Arbfeedforward.calculate(angleRad, 0),
+            ArbFFUnits.kVoltage
         );
     }
 
@@ -189,9 +197,38 @@ public class ArmSubsystem extends SubsystemBase{
         currentArmState = state;
     }
 
+    public void setArmBrake(boolean brakeMode) {
+        if(brakeMode) {
+            arm.setIdleMode(IdleMode.kBrake);
+            arm_follower.setIdleMode(IdleMode.kBrake);
+        } else {
+            arm.setIdleMode(IdleMode.kCoast);
+            arm_follower.setIdleMode(IdleMode.kCoast);
+        }
+    }
+
     public void handleArmStates() {
         if(currentArmState != null && currentArmState != ARM_STATE.MANUAL) {
             setArmPositionSmartMotion(armMap.get(currentArmState));
+        }
+    }
+
+    public void handleIntakeStates() {
+        if(currentIntakeState != null && currentIntakeState != INTAKE_STATE.INTAKING) {
+            switch(currentIntakeState){
+                case IDLE:
+                    setIntake(0.03);
+                    break;
+                case HOLDING:
+                    double percentOut = intakeBangBang.calculate(
+                        400, getSensorProximity()) == 1 ?
+                            0.1 : 0;
+                    
+                    setIntake(percentOut);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -215,7 +252,7 @@ public class ArmSubsystem extends SubsystemBase{
         return shoulder.getSelectedSensorPosition();
     }
 
-    public boolean hasObject() {
+    public boolean objectDetected() {
         return getSensorProximity() > 400;
     }
 
@@ -253,5 +290,6 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("SHOULDER POSITION", getShoulderPosition());
         
         handleArmStates();
+        handleIntakeStates();
     }
  }
