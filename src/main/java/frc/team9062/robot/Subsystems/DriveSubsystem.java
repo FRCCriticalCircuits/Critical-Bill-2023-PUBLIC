@@ -1,6 +1,10 @@
 package frc.team9062.robot.Subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team9062.robot.Constants;
 import frc.team9062.robot.Constants.IDs;
-import frc.team9062.robot.Constants.PhysicalConstants;
 
 public class DriveSubsystem extends SubsystemBase{
     private static DriveSubsystem instance;
@@ -40,7 +43,7 @@ public class DriveSubsystem extends SubsystemBase{
       IDs.FRONT_LEFT_FORWARD_ID,
       IDs.FRONT_LEFT_ROTATION_ID,
       IDs.FRONT_LEFT_CANCODER_ID,
-      157.1,
+      Constants.PhysicalConstants.FRONT_LEFT_OFFSET,
       false,
       false
     );
@@ -49,7 +52,7 @@ public class DriveSubsystem extends SubsystemBase{
         IDs.FRONT_RIGHT_FORWARD_ID, 
         IDs.FRONT_RIGHT_ROTATION_ID,
         IDs.FRONT_RIGHT_CANCODER_ID,
-        63,
+        Constants.PhysicalConstants.FRONT_RIGHT_OFFSET,
         false,
         true
     );
@@ -58,7 +61,7 @@ public class DriveSubsystem extends SubsystemBase{
         IDs.REAR_LEFT_FORWARD_ID, 
         IDs.REAR_LEFT_ROTATION_ID,
         IDs.REAR_LEFT_CANCODER_ID,
-        -66.2,
+        Constants.PhysicalConstants.REAR_LEFT_OFFSET,
         false,
         false
     );
@@ -67,7 +70,7 @@ public class DriveSubsystem extends SubsystemBase{
         IDs.REAR_RIGHT_FORWARD_ID, 
         IDs.REAR_RIGHT_ROTATION_ID,
         IDs.REAR_RIGHT_CANCODER_ID,
-        121.9,
+        Constants.PhysicalConstants.REAR_RIGHT_OFFSET,
         false,
         true
     );
@@ -99,6 +102,28 @@ public class DriveSubsystem extends SubsystemBase{
         }
       }
     ).start();
+
+    AutoBuilder.configureHolonomic(
+      this::getPose, 
+      this::resetPose, 
+      this::getChassisSpeeds, 
+      this::OutputChassisSpeeds, 
+      new HolonomicPathFollowerConfig(
+        new PIDConstants(
+          Constants.TunedConstants.AUTO_PID_TRANSLATION_P, 
+          Constants.TunedConstants.AUTO_PID_TRANSLATION_I, 
+          Constants.TunedConstants.AUTO_PID_TRANSLATION_D
+        ), 
+        new PIDConstants(
+          Constants.TunedConstants.AUTO_PID_THETA_P, 
+          Constants.TunedConstants.AUTO_PID_THETA_I, 
+          Constants.TunedConstants.AUTO_PID_THETA_D
+        ), 
+        getHeading(), 
+        getGyroRate(), 
+        new ReplanningConfig()),
+      this
+    );
   }
 
   public void setBrakeMode(boolean mode) {
@@ -193,6 +218,18 @@ public class DriveSubsystem extends SubsystemBase{
     SwerveModulePosition swerveModulePositions[] = {frontleft, frontright, rearleft, rearright};
 
     return swerveModulePositions;
+  }
+
+  public ChassisSpeeds getChassisSpeeds() {
+    ChassisSpeeds speeds = 
+      Constants.PhysicalConstants.KINEMATICS.toChassisSpeeds(
+        frontLeft.getModuleState(), 
+        frontRight.getModuleState(),
+        rearLeft.getModuleState(),
+        rearRight.getModuleState()
+      );
+
+    return speeds;
   }
 
   public void OutputModuleInfo(SwerveModuleState[] states) {
