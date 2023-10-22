@@ -13,7 +13,7 @@ public class Constants {
 
         public static double GAMEPAD_THRESHOLD = 0.1;
 
-        public static double DRIVER_RUMBLE_STRENGTH = 0.8; // Cannot be larger than 1. The lower the number the less feedback strength the driver would feel.
+        public static double DRIVER_RUMBLE_STRENGTH = 0.5; // Cannot be larger than 1. The lower the number the less feedback strength the driver would feel.
     }
 
     public static class IDs{
@@ -83,15 +83,20 @@ public class Constants {
         // ARM
         // ------------------------------------------------
 
-        public static final double PIDF0_ARM_P = 0.5; //2.4613E-08;
+        public static final double PIDF0_ARM_P = 0.1;
         public static final double PIDF0_ARM_I = 0;
-        public static final double PIDF0_ARM_D = 0; //1.555E-08;
-        public static final double PIDF0_ARM_F = 0;
+        public static final double PIDF0_ARM_D = 0;
+        public static final double PIDF0_ARM_F = 0.08;
 
-        public static final double FEED_ARM_KV = 0.061997;
-        public static final double FEED_ARM_KS = 0.066919;
-        public static final double FEED_ARM_KA = 0.0031346;
-        public static final double FEED_ARM_KG = 0.16969;
+        public static final double PIDF1_ARM_P = 8.1607E-05;
+        public static final double PIDF1_ARM_I = 0;
+        public static final double PIDF1_ARM_D = 5.3545E-05;
+        public static final double PIDF1_ARM_F = 0;
+
+        public static final double FEED_ARM_KV = 3.5181;
+        public static final double FEED_ARM_KS = -0.055858;
+        public static final double FEED_ARM_KA = 0.49846;
+        public static final double FEED_ARM_KG = 0.15946;
 
         // -------------------------------------------------
 
@@ -113,13 +118,9 @@ public class Constants {
         // AUTO CONSTANTS
         // -------------------------------------------------
 
-        public static final double AUTO_PID_X_P = 1;
-        public static final double AUTO_PID_X_I = 0;
-        public static final double AUTO_PID_X_D = 0;
-
-        public static final double AUTO_PID_Y_P = 0;
-        public static final double AUTO_PID_Y_I = 0;
-        public static final double AUTO_PID_Y_D = 0;
+        public static final double AUTO_PID_TRANSLATION_P = 1;
+        public static final double AUTO_PID_TRANSLATION_I = 0;
+        public static final double AUTO_PID_TRANSLATION_D = 0;
 
         public static final double AUTO_PID_THETA_P = 1;
         public static final double AUTO_PID_THETA_I = 0;
@@ -130,8 +131,8 @@ public class Constants {
         public static final double THETA_PID_P = 0;
         public static final double THETA_PID_I = 0;
         public static final double THETA_PID_D = 0;
-        public static final double THETA_MAX_VEL = 1;
-        public static final double THETA_MAX_ACCEL = 1;
+        public static final double THETA_MAX_VEL = Math.PI;
+        public static final double THETA_MAX_ACCEL = Math.PI * 2 / 3;
     }
 
     public static class PhysicalConstants {
@@ -189,10 +190,10 @@ public class Constants {
         // ENCODER OFFSETS
         // --------------------------------------------------
         
-        public static final double FRONT_LEFT_OFFSET = 0;
-        public static final double FRONT_RIGHT_OFFSET = 0;
-        public static final double REAR_LEFT_OFFSET = 0;
-        public static final double REAR_RIGHT_OFFSET = 0;
+        public static final double FRONT_LEFT_OFFSET = 157.1;
+        public static final double FRONT_RIGHT_OFFSET = 63;
+        public static final double REAR_LEFT_OFFSET = -66.2;
+        public static final double REAR_RIGHT_OFFSET = 121.9;
 
         // --------------------------------------------------
 
