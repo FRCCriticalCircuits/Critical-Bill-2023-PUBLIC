@@ -140,7 +140,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void checkEncoder() {
-        if(Math.abs(turnEncoder.getVelocity()) < 0.001 && Math.abs(getVelocity()) < 0.001) {
+        if(Math.abs(turnEncoder.getVelocity()) < 0.005 && Math.abs(getVelocity()) < 0.001) {
             turnEncoder.setPosition(Math.toRadians(canCoder.getPosition()));
         }
     }
@@ -170,7 +170,7 @@ public class SwerveModule extends SubsystemBase{
         SwerveModuleState desiredState = SwerveModuleState.optimize(state, getRotation());
         double velocity = desiredState.speedMetersPerSecond;
         double moduleangle = desiredState.angle.getRadians();
-        //drivePID.setReference(velocity, ControlType.kVelocity);
+        
         drivePID.setReference(
             velocity, 
             ControlType.kVelocity,
@@ -180,8 +180,8 @@ public class SwerveModule extends SubsystemBase{
         );
 
         //drive.set(velocity / Constants.PhysicalConstants.MAX_WHEEL_SPEED_METERS);
-        turnPID.setReference(moduleangle, ControlType.kPosition);
-        //setAngle(moduleangle);
+        //turnPID.setReference(moduleangle, ControlType.kPosition);
+        setAngle(moduleangle);
 
         //SmartDashboard.getNumber("TARGET ANGLE " + canCoder.getDeviceID() / 3, moduleangle);
         //SmartDashboard.getNumber("ANGLE " + canCoder.getDeviceID() / 3, moduleangle);
@@ -227,7 +227,6 @@ public class SwerveModule extends SubsystemBase{
     
     @Override
     public void periodic(){
-        //checkEncoder();
-        checkAngle();
+        checkEncoder();
     }
 }
