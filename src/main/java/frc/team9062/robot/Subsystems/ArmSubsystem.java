@@ -197,6 +197,10 @@ public class ArmSubsystem extends SubsystemBase{
         currentArmState = state;
     }
 
+    public void setCurrentIntakeState(INTAKE_STATE state) {
+        currentIntakeState = state;
+    }
+
     public void setArmBrake(boolean brakeMode) {
         if(brakeMode) {
             arm.setIdleMode(IdleMode.kBrake);
