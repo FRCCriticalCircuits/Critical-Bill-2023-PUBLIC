@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
   private ArmSubsystem armSubsystem;
   private teleopCommand teleopCommand;
   private CriticalLED led;
-  private SendableChooser<String> autoChooser = new SendableChooser<>();
+  private SendableChooser<String> autoChooser;
 
   public Robot() {
     super(kDefaultPeriod);
@@ -32,6 +32,8 @@ public class Robot extends TimedRobot {
     );
     
     led.startLEDManagerThread();
+
+    autoChooser = new SendableChooser<>();
 
     driveSubsystem = DriveSubsystem.getInstance();
     armSubsystem = ArmSubsystem.getInstance();
@@ -97,9 +99,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     armSubsystem.setArmBrake(true);
 
-    Command autoCommand = new PathPlannerAuto(autoChooser.getSelected());
-    if(autoCommand != null) {
-      autoCommand.schedule();
+    if(getAutonomousCommand() != null) {
+      CommandScheduler.getInstance().schedule(getAutonomousCommand());
     }
   }
 
@@ -141,4 +142,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
+
+  private Command getAutonomousCommand() {
+    return new PathPlannerAuto("Test Auto");
+  }
 }
