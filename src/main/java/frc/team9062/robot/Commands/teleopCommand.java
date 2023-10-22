@@ -7,6 +7,7 @@ import frc.team9062.robot.Constants;
 import frc.team9062.robot.Subsystems.ArmSubsystem;
 import frc.team9062.robot.Subsystems.DriveSubsystem;
 import frc.team9062.robot.Subsystems.ArmSubsystem.ARM_STATE;
+import frc.team9062.robot.Subsystems.ArmSubsystem.INTAKE_STATE;
 import frc.team9062.robot.Utils.ControllerBinds;
 import frc.team9062.robot.Utils.IO;
 import frc.team9062.robot.Utils.SwerveDriveController;
@@ -18,8 +19,9 @@ public class teleopCommand extends CommandBase{
     private ControllerBinds binds;
     private IO io;
     private double lastVel = 0;
-    private boolean manualArmControl = true;
+    private boolean clip0, clip180, clip90, clippingToggled = false, manualArmControl = true;
     private Debouncer toggleDebouncer = new Debouncer(0.5, DebounceType.kBoth);
+    private Debouncer clippingDebouncer = new Debouncer(0.2, DebounceType.kBoth);
 
     public teleopCommand(){
       driveSubsystem = DriveSubsystem.getInstance();
@@ -37,18 +39,29 @@ public class teleopCommand extends CommandBase{
     @Override
     public void execute() {
       // Drive
-      driveController.drive(
-        io.getDriverLeftY() * Constants.PhysicalConstants.MAX_TRANSLATION_SPEED_METERS,
-        io.getDriverLeftX() * Constants.PhysicalConstants.MAX_TRANSLATION_SPEED_METERS, 
-        io.getDriverRightX() * Constants.PhysicalConstants.MAX_ANGULAR_SPEED_METERS, 
-        true
-      );
+      if(!clippingToggled) {
+        driveController.drive(
+          io.getDriverLeftY() * Constants.PhysicalConstants.MAX_TRANSLATION_SPEED_METERS,
+          io.getDriverLeftX() * Constants.PhysicalConstants.MAX_TRANSLATION_SPEED_METERS, 
+          io.getDriverRightX() * Constants.PhysicalConstants.MAX_ANGULAR_SPEED_METERS, 
+          true
+        );
+      } else {
+        double heading = clip0 ? 180 : clip180 ? 0 : clip90 ? 90 : -90;
+
+        driveController.driveWithHeading(
+          io.getDriverLeftY(), 
+          io.getDriverLeftX(), 
+          heading
+        );
+      }
 
       if(binds.resetHeading()) driveSubsystem.resetHeading();
 
-      // Arm Controls
+      if(clippingDebouncer.calculate(Math.abs(io.getDriverRightX()) > 0)) clippingToggled = false;
       if(toggleDebouncer.calculate(Math.abs(io.getOperatorLeftY()) > 0)) manualArmControl = true;
       
+      // Arm Controls
       if(manualArmControl) {
         armSubsystem.setArm(-io.getOperatorLeftY());
         armSubsystem.setCurrentArmState(ARM_STATE.MANUAL);
@@ -68,6 +81,24 @@ public class teleopCommand extends CommandBase{
         manualArmControl = false;
       }
 
+      // 
+      if(io.getDriverPOVUP()) {
+        setClipsFalse();
+        clip0 = true;
+        clippingToggled = true;
+      } else if(io.getDriverPOVRIGHT()) {
+        setClipsFalse();
+        clip90 = true;
+        clippingToggled = true;
+      } else if(io.getDriverPOVDOWN()) {
+        setClipsFalse();
+        clip180 = true;
+        clippingToggled = true;
+      } else if(io.getDriverPOVLEFT()) {
+        setClipsFalse();
+        clippingToggled = true;
+      }
+
       armSubsystem.setShoulder(io.getOperatorRightY());
 
       // Intake Binds
@@ -77,6 +108,7 @@ public class teleopCommand extends CommandBase{
         armSubsystem.setCubeIntake();
       } else if(binds.Outtake()) {
         armSubsystem.setIntake(-0.5);
+        if(!armSubsystem.objectDetected()) armSubsystem.setCurrentIntakeState(INTAKE_STATE.IDLE);
       } else {
         armSubsystem.setIntake(0);
       }
@@ -91,6 +123,12 @@ public class teleopCommand extends CommandBase{
       lastVel = velocity;
     }
   
+    public void setClipsFalse() {
+      clip0 = false;
+      clip180 = false;
+      clip90 = false;
+    } 
+
     @Override
     public void end(boolean interrupted) {}
   
