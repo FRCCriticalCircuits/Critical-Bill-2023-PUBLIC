@@ -1,13 +1,10 @@
 package frc.team9062.robot.Commands;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team9062.robot.Constants;
 import frc.team9062.robot.Subsystems.DriveSubsystem;
 import frc.team9062.robot.Utils.SwerveDriveController;
-import frc.team9062.robot.Utils.CriticalLED.CriticalLED;
-import frc.team9062.robot.Utils.CriticalLED.PresetCommands.strobeColor;
 
 public class Autobalance extends CommandBase{
     private DriveSubsystem driveSubsystem;
@@ -15,13 +12,10 @@ public class Autobalance extends CommandBase{
     private PIDController stage1Controller, stage2Controller;
     private double threshold, chargeStationThreshold;
     private boolean isReversed, onChargeStation;
-    private CriticalLED led;
 
-    public Autobalance(boolean isReversed, boolean onChargeStation, CriticalLED led) {
+    public Autobalance(boolean isReversed, boolean onChargeStation) {
         driveSubsystem = DriveSubsystem.getInstance();
         driveController = new SwerveDriveController();
-
-        this.led = led;
 
         this.isReversed = isReversed;
         this.onChargeStation = onChargeStation;
