@@ -32,7 +32,7 @@ public class ControllerBinds {
     }
 
     public boolean setArmStowed() {
-        return io.getOperatorAButton();
+        return io.getOperatorRightBumper();
     }
 
     public boolean setArmHigh() {
@@ -43,8 +43,16 @@ public class ControllerBinds {
         return io.getOperatorBButton();
     }
 
+    public boolean setArmLow() {
+        return io.getOperatorAButton();
+    }
+
     public boolean setArmDoubleSub() {
         return io.getOperatorLeftBumper();
+    }
+
+    public boolean setArmOrigin() {
+        return io.getOperatorLeftStickButton();
     }
 
     public boolean resetHeading() {
