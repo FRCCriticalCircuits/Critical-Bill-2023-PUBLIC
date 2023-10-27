@@ -4,59 +4,28 @@
 
 package frc.team9062.robot;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.team9062.robot.Commands.teleopCommand;
 import frc.team9062.robot.Subsystems.ArmSubsystem;
 import frc.team9062.robot.Subsystems.DriveSubsystem;
-import frc.team9062.robot.Utils.CriticalLED.CriticalLED;
 
 public class Robot extends TimedRobot {
-  private DriveSubsystem driveSubsystem;
+  //private DriveSubsystem driveSubsystem;
   private ArmSubsystem armSubsystem;
-  private teleopCommand teleopCommand;
-  private CriticalLED led;
-  private SendableChooser<String> autoChooser;
+  //private CriticalLED led;
+  private RobotContainer robotContainer;
 
   public Robot() {
     super(kDefaultPeriod);
 
-    led = new CriticalLED(
-      Constants.IDs.LED_PORT, 
-      Constants.LED_BUFFER_LENGTH
-    );
-    
-    led.startLEDManagerThread();
-
-    autoChooser = new SendableChooser<>();
-
-    driveSubsystem = DriveSubsystem.getInstance();
+    // = DriveSubsystem.getInstance();
     armSubsystem = ArmSubsystem.getInstance();
-    teleopCommand = new teleopCommand();
+
+    robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotInit() {
-    autoChooser.addOption("TEST TAXI", "Test Taxi");
-    autoChooser.addOption("Middle Taxi", "Middle Taxi");
-    autoChooser.addOption("Clearside Taxi", "Clearside Taxi");
-    autoChooser.addOption("Bumpside Taxi", "BumpSide Taxi");
-
-    SmartDashboard.putData("AUTO SELECTOR", autoChooser);
-    
-    driveSubsystem.setDefaultCommand(
-      teleopCommand
-    );
-
-    armSubsystem.setDefaultCommand(
-      teleopCommand
-    );
-
     armSubsystem.setArmBrake(false);
 
     /* 
@@ -99,8 +68,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     armSubsystem.setArmBrake(true);
 
-    if(getAutonomousCommand() != null) {
-      CommandScheduler.getInstance().schedule(getAutonomousCommand());
+    if(robotContainer.getAutonomousCommand() != null) {
+      robotContainer.getAutonomousCommand().schedule();
     }
   }
 
@@ -113,17 +82,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     armSubsystem.setArmBrake(true);
-
-    CommandScheduler.getInstance().schedule(teleopCommand);
-
-    /*
-    led.scheduleLEDCommand(
-      new staticColor(
-        led, 
-        Color.kGreen
-      )
-    );
-    */
   }
 
   @Override
@@ -142,8 +100,4 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
-
-  private Command getAutonomousCommand() {
-    return new PathPlannerAuto("Test Auto");
-  }
 }
