@@ -53,7 +53,7 @@ public class SwerveModule extends SubsystemBase{
         turn.setSmartCurrentLimit(Constants.PhysicalConstants.TURN_CURRENT_LIMIT);
 
         drive.setClosedLoopRampRate(0.1);
-        //drive.setOpenLoopRampRate(0.1);
+        turn.setClosedLoopRampRate(0.1);
 
         driveEncoder.setPositionConversionFactor(Units.inchesToMeters(1 / Constants.PhysicalConstants.DRIVE_GEAR_RATIO * Math.PI * 4));
         driveEncoder.setVelocityConversionFactor(Units.inchesToMeters(1 / Constants.PhysicalConstants.DRIVE_GEAR_RATIO * Math.PI * 4) / 60);
@@ -83,6 +83,8 @@ public class SwerveModule extends SubsystemBase{
         turnPID.setFF(Constants.TunedConstants.PIDF0_TURN_F, 0);
         //turnPID.setOutputRange(-Math.PI, Math.PI, 0);
         //turnPID.setIZone(1);
+
+        drivePID.setOutputRange(-1, 1);
 
         drivePID.setFeedbackDevice(driveEncoder);
         turnPID.setFeedbackDevice(turnEncoder);
@@ -178,9 +180,9 @@ public class SwerveModule extends SubsystemBase{
             Arbfeedforward.calculate(velocity),
             ArbFFUnits.kVoltage
         );
-
-        //drive.set(velocity / Constants.PhysicalConstants.MAX_WHEEL_SPEED_METERS);
-        //turnPID.setReference(moduleangle, ControlType.kPosition);
+         //drive.set(velocity / Constants.PhysicalConstants.MAX_WHEEL_SPEED_METERS);
+        
+         //turnPID.setReference(moduleangle, ControlType.kPosition);
         setAngle(moduleangle);
 
         //SmartDashboard.getNumber("TARGET ANGLE " + canCoder.getDeviceID() / 3, moduleangle);
