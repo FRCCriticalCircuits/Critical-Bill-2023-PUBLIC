@@ -13,7 +13,7 @@ public class Constants {
 
         public static double GAMEPAD_THRESHOLD = 0.1;
 
-        public static double DRIVER_RUMBLE_STRENGTH = 0.5; // Cannot be larger than 1. The lower the number the less feedback strength the driver would feel.
+        public static double DRIVER_RUMBLE_STRENGTH = 0.3; // Cannot be larger than 1. The lower the number the less feedback strength the driver would feel.
     }
 
     public static class IDs{
@@ -83,10 +83,10 @@ public class Constants {
         // ARM
         // ------------------------------------------------
 
-        public static final double PIDF0_ARM_P = 0.1;
+        public static final double PIDF0_ARM_P = 0.2;
         public static final double PIDF0_ARM_I = 0;
         public static final double PIDF0_ARM_D = 0;
-        public static final double PIDF0_ARM_F = 0.08;
+        public static final double PIDF0_ARM_F = 0.0015;
 
         public static final double PIDF1_ARM_P = 8.1607E-05;
         public static final double PIDF1_ARM_I = 0;
@@ -128,11 +128,11 @@ public class Constants {
 
         // -------------------------------------------------
 
-        public static final double THETA_PID_P = 0;
+        public static final double THETA_PID_P = 0.05;
         public static final double THETA_PID_I = 0;
         public static final double THETA_PID_D = 0;
-        public static final double THETA_MAX_VEL = Math.PI;
-        public static final double THETA_MAX_ACCEL = Math.PI * 2 / 3;
+        public static final double THETA_MAX_VEL = 135;
+        public static final double THETA_MAX_ACCEL = 90;
     }
 
     public static class PhysicalConstants {
@@ -156,9 +156,9 @@ public class Constants {
 
         public static final double SHUFFLER_GEAR_RATIO = 1.25;
 
-        public static final double MAX_TRANSLATION_SPEED_METERS = 4.3;
-        public static final double MAX_ANGULAR_SPEED_METERS = 3.6;
-        public static final double MAX_WHEEL_SPEED_METERS = 4.5;
+        public static final double MAX_TRANSLATION_SPEED_METERS = 4.5;
+        public static final double MAX_ANGULAR_SPEED_METERS = 4.3;
+        public static final double MAX_WHEEL_SPEED_METERS = 4.85;
 
         public static final double MAX_ARM_VELOCITY = 4.25;
         public static final double MAX_ARM_ACCELERATION = 2.25;
@@ -190,10 +190,10 @@ public class Constants {
         // ENCODER OFFSETS
         // --------------------------------------------------
         
-        public static final double FRONT_LEFT_OFFSET = 157.1;
-        public static final double FRONT_RIGHT_OFFSET = 63;
-        public static final double REAR_LEFT_OFFSET = -66.2;
-        public static final double REAR_RIGHT_OFFSET = 121.9;
+        public static final double FRONT_LEFT_OFFSET = 155.3027; //157.1;
+        public static final double FRONT_RIGHT_OFFSET = 65.03906; //63;
+        public static final double REAR_LEFT_OFFSET = -65.83; //-66.2;
+        public static final double REAR_RIGHT_OFFSET = 121.99; //121.9;
 
         // --------------------------------------------------
 
@@ -201,11 +201,12 @@ public class Constants {
         // ARM POSITIONS
         // --------------------------------------------------
         
-        public static double ARM_STOWED = -1.3;
-        public static double ARM_STARTING = 3.9;
-        public static double ARM_HIGH = 0.51;
-        public static double ARM_MID = 0.06;
-        public static double ARM_DOUBLE_SUB = 0.4;
+        public static double ARM_STOWED = 3.5;
+        public static double ARM_HOME = 3.9;
+        public static double ARM_HIGH = 0.79;
+        public static double ARM_MID = 0.41;
+        public static double ARM_LOW = -0.43;
+        public static double ARM_DOUBLE_SUB = 0.3;
 
         // --------------------------------------------------
 
