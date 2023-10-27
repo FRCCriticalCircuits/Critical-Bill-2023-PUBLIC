@@ -2,6 +2,7 @@ package frc.team9062.robot.Subsystems;
 
 import java.util.HashMap;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
@@ -49,9 +50,10 @@ public class ArmSubsystem extends SubsystemBase{
     public enum ARM_STATE {
         HIGH,
         MID,
+        LOW,
         DOUBLE_SUB,
         HOLD,
-        STARTING,
+        HOME,
         MANUAL
     }
 
@@ -100,7 +102,7 @@ public class ArmSubsystem extends SubsystemBase{
 
         armEncoder.setPositionConversionFactor(1 / Constants.PhysicalConstants.ARM_GEAR_RATIO * Math.PI * 2);
         armEncoder.setVelocityConversionFactor((1 / Constants.PhysicalConstants.ARM_GEAR_RATIO * Math.PI * 2) / 60);
-        armEncoder.setPosition(Constants.PhysicalConstants.ARM_STARTING);
+        armEncoder.setPosition(Constants.PhysicalConstants.ARM_HOME);
 
         armPID.setP(Constants.TunedConstants.PIDF0_ARM_P, 0);
         armPID.setI(Constants.TunedConstants.PIDF0_ARM_I, 0);
@@ -131,9 +133,10 @@ public class ArmSubsystem extends SubsystemBase{
         arm_follower.burnFlash();
 
         // Map arm states to their positions
-        armMap.put(ARM_STATE.STARTING, Constants.PhysicalConstants.ARM_STARTING);
+        armMap.put(ARM_STATE.HOME, Constants.PhysicalConstants.ARM_HOME);
         armMap.put(ARM_STATE.HIGH, Constants.PhysicalConstants.ARM_HIGH);
         armMap.put(ARM_STATE.MID, Constants.PhysicalConstants.ARM_MID);
+        armMap.put(ARM_STATE.LOW, Constants.PhysicalConstants.ARM_LOW);
         armMap.put(ARM_STATE.DOUBLE_SUB, Constants.PhysicalConstants.ARM_DOUBLE_SUB);
         armMap.put(ARM_STATE.HOLD, Constants.PhysicalConstants.ARM_STOWED);
     }
@@ -150,7 +153,7 @@ public class ArmSubsystem extends SubsystemBase{
         if(objectDetected()) {
             RobotGameState.getInstance().setActiveGamePieve(GamePiece.CONE);
         } else {
-            intake.set(VictorSPXControlMode.PercentOutput, 0.2);
+            intake.set(VictorSPXControlMode.PercentOutput, 0.5);
         }
     }
 
@@ -158,8 +161,12 @@ public class ArmSubsystem extends SubsystemBase{
         if(objectDetected()) {
             RobotGameState.getInstance().setActiveGamePieve(GamePiece.CUBE);
         } else {
-            intake.set(VictorSPXControlMode.PercentOutput, 0.2);
+            intake.set(VictorSPXControlMode.PercentOutput, 0.3);
         }
+    }
+
+    public void setIntakeCurrent(double current) {
+        intake.set(ControlMode.Current, current);
     }
 
     public void setShoulder(double percentOutput) {
@@ -221,7 +228,7 @@ public class ArmSubsystem extends SubsystemBase{
         if(currentIntakeState != null && currentIntakeState != INTAKE_STATE.INTAKING) {
             switch(currentIntakeState){
                 case IDLE:
-                    setIntake(0.03);
+                    setIntake(0.05);
                     break;
                 case HOLDING:
                     double percentOut = intakeBangBang.calculate(
@@ -294,6 +301,6 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("SHOULDER POSITION", getShoulderPosition());
         
         handleArmStates();
-        handleIntakeStates();
+        //handleIntakeStates();
     }
  }
