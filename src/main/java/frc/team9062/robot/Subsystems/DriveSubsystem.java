@@ -1,10 +1,6 @@
 package frc.team9062.robot.Subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -93,6 +89,9 @@ public class DriveSubsystem extends SubsystemBase{
   private Field2d field = new Field2d();
 
   public DriveSubsystem() {
+    gyro.calibrate();
+    gyro.setAngleAdjustment(Constants.PhysicalConstants.GYRO_OFFSET);
+
     new Thread(() -> {
         try {
           Thread.sleep(2000);
@@ -102,28 +101,6 @@ public class DriveSubsystem extends SubsystemBase{
         }
       }
     ).start();
-
-    AutoBuilder.configureHolonomic(
-      this::getPose, 
-      this::resetPose, 
-      this::getChassisSpeeds, 
-      this::OutputChassisSpeeds, 
-      new HolonomicPathFollowerConfig(
-        new PIDConstants(
-          Constants.TunedConstants.AUTO_PID_TRANSLATION_P, 
-          Constants.TunedConstants.AUTO_PID_TRANSLATION_I, 
-          Constants.TunedConstants.AUTO_PID_TRANSLATION_D
-        ), 
-        new PIDConstants(
-          Constants.TunedConstants.AUTO_PID_THETA_P, 
-          Constants.TunedConstants.AUTO_PID_THETA_I, 
-          Constants.TunedConstants.AUTO_PID_THETA_D
-        ), 
-        getHeading(), 
-        getGyroRate(), 
-        new ReplanningConfig()),
-      this
-    );
   }
 
   public void setBrakeMode(boolean mode) {
@@ -160,7 +137,7 @@ public class DriveSubsystem extends SubsystemBase{
   }
 
   public double getHeading() {
-    return gyro.getYaw() * (Constants.PhysicalConstants.isGyroReversed ? -1 : 1) - Constants.PhysicalConstants.GYRO_OFFSET;
+    return gyro.getAngle() * (Constants.PhysicalConstants.isGyroReversed ? -1 : 1);
   }
 
   public Rotation2d getRotation2d() {
@@ -259,6 +236,11 @@ public class DriveSubsystem extends SubsystemBase{
     //SmartDashboard.putNumber("FRONT RIGHT ANGLE", Math.toDegrees(frontRight.getAngle()));
     //SmartDashboard.putNumber("REAR LEFT ANGLE", Math.toDegrees(rearLeft.getAngle()));
     //SmartDashboard.putNumber("REAR RIGHT ANGLE", Math.toDegrees(rearRight.getAngle()));
+
+    //SmartDashboard.putNumber("FRONT LEFT ABSOLUTE ANGLE", frontLeft.getAbsoluteAngle());
+    //SmartDashboard.putNumber("FRONT RIGHT ABSOLUTE ANGLE", frontRight.getAbsoluteAngle());
+    //SmartDashboard.putNumber("REAR LEFT ABSOLUTE ANGLE", rearLeft.getAbsoluteAngle());
+    //SmartDashboard.putNumber("REAR RIGHT ABSOLUTE ANGLE", rearRight.getAbsoluteAngle());
 
     SmartDashboard.putNumber("ANGLE", getHeading());
   }
