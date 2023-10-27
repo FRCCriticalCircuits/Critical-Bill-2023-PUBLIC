@@ -57,6 +57,14 @@ public class IO {
         return driverGamepad.getRightBumper();
     }
 
+    public boolean getDriverLeftStickButton() {
+        return driverGamepad.getLeftStickButton();
+    }
+
+    public boolean getDriverRightStickButton() {
+        return driverGamepad.getRightStickButton();
+    }
+
     public boolean getDriverXButton() {
         return driverGamepad.getXButton();
     }
@@ -119,6 +127,14 @@ public class IO {
 
     public boolean getOperatorRightBumper() {
         return operatorGamepad.getRightBumper();
+    }
+
+    public boolean getOperatorLeftStickButton() {
+        return operatorGamepad.getLeftStickButton();
+    }
+
+    public boolean getOperatorRightStickButton() {
+        return operatorGamepad.getRightStickButton();
     }
 
     public boolean getOperatorXButton() {
