@@ -7,27 +7,28 @@ package frc.team9062.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.team9062.robot.Autos.bumpsideTaxi;
+import frc.team9062.robot.Autos.clearsideTaxi;
+import frc.team9062.robot.Autos.middleTaxi;
+import frc.team9062.robot.Autos.testAuto;
 import frc.team9062.robot.Commands.teleopArm;
 import frc.team9062.robot.Commands.teleopDrive;
 import frc.team9062.robot.Subsystems.ArmSubsystem;
 import frc.team9062.robot.Subsystems.DriveSubsystem;
-import frc.team9062.robot.Utils.IO;
 
 public class RobotContainer {
   private DriveSubsystem driveSubsystem;
   private ArmSubsystem armSubsystem;
-  private IO io;
-  private SendableChooser<String> autoChooser = new SendableChooser<>();
+  private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   public RobotContainer() {
     driveSubsystem = DriveSubsystem.getInstance();
     armSubsystem = ArmSubsystem.getInstance();
-    io = IO.getInstance();
     
-    autoChooser.addOption("TEST TAXI", "Test Taxi");
-    autoChooser.addOption("MIDDLE TAXI", "Middle Taxi");
-    autoChooser.addOption("CLEARSIDE TAXI", "Clearside Taxi");
-    autoChooser.addOption("BUMPSIDE TAXI", "BumpSide Taxi");
+    autoChooser.addOption("TEST TAXI", new testAuto().testAutoCommand());
+    autoChooser.addOption("MIDDLE TAXI", new middleTaxi().middleTaxiCommand());
+    autoChooser.addOption("CLEARSIDE TAXI", new clearsideTaxi().clearsideTaxiCommand());
+    autoChooser.addOption("BUMPSIDE TAXI", new bumpsideTaxi().bumpsideTaxiCommand());
 
     SmartDashboard.putData("AUTO SELECTOR", autoChooser);
 
@@ -45,6 +46,6 @@ public class RobotContainer {
   private void configureBindings() {}
 
   public Command getAutonomousCommand(){
-    return null; //new testAuto().testAutoCommand();
+    return autoChooser.getSelected();
   }
 }
