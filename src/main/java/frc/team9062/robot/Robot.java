@@ -7,7 +7,6 @@ package frc.team9062.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.team9062.robot.Subsystems.ArmSubsystem;
-import frc.team9062.robot.Subsystems.DriveSubsystem;
 
 public class Robot extends TimedRobot {
   //private DriveSubsystem driveSubsystem;
@@ -46,23 +45,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-
-    /*
-    led.scheduleLEDCommand(
-      new strobeColor(
-        led,
-        500,
-        Color.kRed
-      )
-    );
-    */
+    armSubsystem.setArmBrake(false);
   }
 
   @Override
   public void disabledPeriodic() {}
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    armSubsystem.setArmBrake(true);
+  }
 
   @Override
   public void autonomousInit() {
