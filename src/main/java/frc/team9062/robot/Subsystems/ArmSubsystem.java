@@ -19,6 +19,7 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.BangBangController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,6 +39,7 @@ public class ArmSubsystem extends SubsystemBase{
     private BangBangController intakeBangBang;
     private ARM_STATE currentArmState;
     private INTAKE_STATE currentIntakeState = INTAKE_STATE.IDLE;
+    private DigitalInput shoulderLimitSwitch = new DigitalInput(0);
 
     public static ArmSubsystem getInstance() {
         if(instance == null) {
@@ -161,7 +163,7 @@ public class ArmSubsystem extends SubsystemBase{
         if(objectDetected()) {
             RobotGameState.getInstance().setActiveGamePieve(GamePiece.CUBE);
         } else {
-            intake.set(VictorSPXControlMode.PercentOutput, 0.3);
+            intake.set(VictorSPXControlMode.PercentOutput, 0.5);
         }
     }
 
@@ -263,6 +265,10 @@ public class ArmSubsystem extends SubsystemBase{
         return shoulder.getSelectedSensorPosition();
     }
 
+    public boolean shoulderInPosition() {
+        return !shoulderLimitSwitch.get();
+    }
+
     public boolean objectDetected() {
         return getSensorProximity() > 400;
     }
@@ -295,11 +301,13 @@ public class ArmSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumberArray("Detected Color", getSensorRGB());
+        //SmartDashboard.putNumberArray("Detected Color", getSensorRGB());
         SmartDashboard.putNumber("ARM ANGLE", armEncoder.getPosition());
-        SmartDashboard.putNumber("SENSOR PROXITY", getSensorProximity());
-        SmartDashboard.putNumber("SHOULDER POSITION", getShoulderPosition());
+        //SmartDashboard.putNumber("SENSOR PROXITY", getSensorProximity());
+        //SmartDashboard.putNumber("SHOULDER POSITION", getShoulderPosition());
         
+        SmartDashboard.putBoolean("SHOULDER IN POS.", shoulderInPosition());
+
         handleArmStates();
         //handleIntakeStates();
     }
