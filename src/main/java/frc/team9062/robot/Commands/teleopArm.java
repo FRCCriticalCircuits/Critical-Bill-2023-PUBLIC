@@ -61,10 +61,10 @@ public class teleopArm extends CommandBase{
         } else if(binds.CubeIntake()) {
             armSubsystem.setCubeIntake();
         } else if(binds.Outtake()) {
-            armSubsystem.setIntake(-0.5);
+            armSubsystem.setIntake(-0.8);
             //if(!armSubsystem.objectDetected()) armSubsystem.setCurrentIntakeState(INTAKE_STATE.IDLE);
         } else {
-            armSubsystem.setIntakeCurrent(20);
+            armSubsystem.setIntake(0.05);
         }
     }
 
