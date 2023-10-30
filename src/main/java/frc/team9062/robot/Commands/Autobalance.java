@@ -10,7 +10,7 @@ public class Autobalance extends CommandBase{
     private DriveSubsystem driveSubsystem;
     private SwerveDriveController driveController;
     private PIDController stage1Controller, stage2Controller;
-    private double threshold, chargeStationThreshold;
+    private double chargeStationThreshold, threshold = 10;
     private boolean isReversed, onChargeStation;
 
     public Autobalance(boolean isReversed, boolean onChargeStation) {
@@ -32,6 +32,8 @@ public class Autobalance extends CommandBase{
             Constants.TunedConstants.STAGE2_AUTOBALANCE_D
         );
 
+        stage2Controller.setTolerance(0.3);
+
         addRequirements(driveSubsystem);
     }
 
@@ -52,26 +54,28 @@ public class Autobalance extends CommandBase{
     public void execute() {
         if(!onChargeStation) {
             driveController.drive(
-                0, isReversed ? -1 : 1, 0, true
+                0, isReversed ? 1 : -1, 0, true
             );
 
-            if(Math.abs(driveSubsystem.getPitch()) > chargeStationThreshold) {
+            if(Math.abs(driveSubsystem.getRoll()) > chargeStationThreshold) {
                 onChargeStation = true;
             }
         } else {
-            if(Math.abs(driveSubsystem.getPitch()) > threshold) {
+            if(Math.abs(driveSubsystem.getRoll()) > threshold) {
                 driveController.drive(
-                    0, isReversed ? 
-                        -(stage1Controller.calculate(driveSubsystem.getPitch(), 0)) : 
-                        stage1Controller.calculate(driveSubsystem.getPitch(), 0),
-                    0, 
+                    0,
+                    isReversed ? 
+                        (stage1Controller.calculate(driveSubsystem.getRoll(), 0)) : 
+                        -stage1Controller.calculate(driveSubsystem.getRoll(), 0),
+                    0,
                     true
                 );
             } else {
                 driveController.drive(
-                    0, isReversed ? 
-                        -(stage2Controller.calculate(driveSubsystem.getPitch(), 0)) : 
-                        stage2Controller.calculate(driveSubsystem.getPitch(), 0),
+                    0,
+                    isReversed ? 
+                        (stage2Controller.calculate(driveSubsystem.getRoll(), 0)) : 
+                        -stage2Controller.calculate(driveSubsystem.getRoll(), 0),
                     0, 
                     true
                 );
