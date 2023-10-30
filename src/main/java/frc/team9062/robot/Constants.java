@@ -104,11 +104,11 @@ public class Constants {
         // AUTOBALANCE PID
         // -------------------------------------------------
         
-        public static final double STAGE1_AUTOBALANCE_P = 0;
+        public static final double STAGE1_AUTOBALANCE_P = 0.05;
         public static final double STAGE1_AUTOBALANCE_I = 0;
         public static final double STAGE1_AUTOBALANCE_D = 0;
 
-        public static final double STAGE2_AUTOBALANCE_P = 0;
+        public static final double STAGE2_AUTOBALANCE_P = 0.003;
         public static final double STAGE2_AUTOBALANCE_I = 0;
         public static final double STAGE2_AUTOBALANCE_D = 0;
 
@@ -118,17 +118,17 @@ public class Constants {
         // AUTO CONSTANTS
         // -------------------------------------------------
 
-        public static final double AUTO_PID_TRANSLATION_P = 1;
+        public static final double AUTO_PID_TRANSLATION_P = 0.5;
         public static final double AUTO_PID_TRANSLATION_I = 0;
         public static final double AUTO_PID_TRANSLATION_D = 0;
 
-        public static final double AUTO_PID_THETA_P = 1;
+        public static final double AUTO_PID_THETA_P = 0.05;
         public static final double AUTO_PID_THETA_I = 0;
         public static final double AUTO_PID_THETA_D = 0;
 
         // -------------------------------------------------
 
-        public static final double THETA_PID_P = 0.05;
+        public static final double THETA_PID_P = 0.03;
         public static final double THETA_PID_I = 0;
         public static final double THETA_PID_D = 0;
         public static final double THETA_MAX_VEL = 135;
@@ -156,9 +156,9 @@ public class Constants {
 
         public static final double SHUFFLER_GEAR_RATIO = 1.25;
 
-        public static final double MAX_TRANSLATION_SPEED_METERS = 4.5;
-        public static final double MAX_ANGULAR_SPEED_METERS = 4.3;
-        public static final double MAX_WHEEL_SPEED_METERS = 4.85;
+        public static final double MAX_TRANSLATION_SPEED_METERS = 4.8;
+        public static final double MAX_ANGULAR_SPEED_METERS = 4.5;
+        public static final double MAX_WHEEL_SPEED_METERS = 5;
 
         public static final double MAX_ARM_VELOCITY = 4.25;
         public static final double MAX_ARM_ACCELERATION = 2.25;
@@ -184,7 +184,7 @@ public class Constants {
         public static final double NOMINAL_VOLTAGE = 12; // For Comp saturation
 
         public static final boolean isGyroReversed = true;
-        public static final double GYRO_OFFSET = 180;
+        public static final double GYRO_OFFSET = 0;
 
         // --------------------------------------------------
         // ENCODER OFFSETS
@@ -201,12 +201,12 @@ public class Constants {
         // ARM POSITIONS
         // --------------------------------------------------
         
-        public static double ARM_STOWED = 3.5;
+        public static double ARM_STOWED = 3.16;
         public static double ARM_HOME = 3.9;
         public static double ARM_HIGH = 0.79;
         public static double ARM_MID = 0.41;
         public static double ARM_LOW = -0.43;
-        public static double ARM_DOUBLE_SUB = 0.3;
+        public static double ARM_DOUBLE_SUB = 0.4;
 
         // --------------------------------------------------
 
