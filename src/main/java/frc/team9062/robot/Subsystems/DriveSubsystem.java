@@ -149,11 +149,11 @@ public class DriveSubsystem extends SubsystemBase{
   }
 
   public double getPitch() {
-    return gyro.getPitch();
+    return gyro.getRoll();
   }
 
   public double getRoll() {
-    return gyro.getRoll();
+    return gyro.getPitch();
   }
 
   public double getGyroRate() {
@@ -242,6 +242,12 @@ public class DriveSubsystem extends SubsystemBase{
     //SmartDashboard.putNumber("REAR LEFT ABSOLUTE ANGLE", rearLeft.getAbsoluteAngle());
     //SmartDashboard.putNumber("REAR RIGHT ABSOLUTE ANGLE", rearRight.getAbsoluteAngle());
 
-    SmartDashboard.putNumber("ANGLE", getHeading());
+    SmartDashboard.putNumber("POSE X", getPose().getX());
+    SmartDashboard.putNumber("POSE Y", getPose().getY());
+    SmartDashboard.putNumber("POSE THETA", getPose().getRotation().getDegrees());
+
+    SmartDashboard.putNumber("PITCH", getPitch());  
+
+    //SmartDashboard.putNumber("ANGLE", getHeading());
   }
 }
