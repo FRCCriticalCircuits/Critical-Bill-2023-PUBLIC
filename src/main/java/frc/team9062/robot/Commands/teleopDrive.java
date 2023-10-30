@@ -67,7 +67,7 @@ public class teleopDrive extends CommandBase {
             }
 
             driveController.driveWithHeading(
-                io.getDriverLeftY() * Constants.PhysicalConstants.MAX_TRANSLATION_SPEED_METERS, 
+                -io.getDriverLeftY() * Constants.PhysicalConstants.MAX_TRANSLATION_SPEED_METERS, 
                 io.getDriverLeftX() * Constants.PhysicalConstants.MAX_TRANSLATION_SPEED_METERS, 
                 snappedAngle
             );
