@@ -26,6 +26,7 @@ public class SwerveDriveController {
             )
         );
         thetaController.enableContinuousInput(-180, 180);
+        resetThetaController();
     }
 
     public void drive( DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, boolean isfieldRelative ) {
@@ -53,7 +54,7 @@ public class SwerveDriveController {
     }
 
     public void driveWithHeading(double x, double y, double targetHeading) {
-        double theta = thetaController.calculate(driveSubsystem.getHeading(), targetHeading);
+        double theta = thetaController.calculate(driveSubsystem.getRotation2d().getDegrees(), targetHeading);
 
         ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             x, y, theta, driveSubsystem.getRotation2d()
@@ -62,6 +63,10 @@ public class SwerveDriveController {
         SwerveModuleState[] swerveModuleStates = Constants.PhysicalConstants.KINEMATICS.toSwerveModuleStates(chassisSpeeds);
         
         driveSubsystem.OutputModuleInfo(swerveModuleStates);
+    }
+
+    public void resetThetaController() {
+        thetaController.reset(driveSubsystem.getRotation2d().getDegrees());
     }
 
     public void adjustDynamics(ChassisSpeeds desiredSpeeds) {
