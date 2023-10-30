@@ -78,15 +78,19 @@ public class teleopDrive extends CommandBase {
         if(io.getDriverPOVUP()) {
             currentAngle = SNAP_ANGLE.SNAP_0;
             snappingToggled = true;
+            driveController.resetThetaController();
         } else if(io.getDriverPOVRIGHT()) {
             currentAngle = SNAP_ANGLE.SNAP_90;
             snappingToggled = true;
+            driveController.resetThetaController();
         } else if(io.getDriverPOVDOWN()){
             currentAngle = SNAP_ANGLE.SNAP_180;
             snappingToggled = true;
+            driveController.resetThetaController();
         } else if(io.getDriverPOVLEFT()) {
             currentAngle = SNAP_ANGLE.SNAP_270;
             snappingToggled = true;
+            driveController.resetThetaController();
         }
 
         if(snappingToggled && toggleDebouncer.calculate(Math.abs(io.getDriverRightX()) > 0)) snappingToggled = false;
