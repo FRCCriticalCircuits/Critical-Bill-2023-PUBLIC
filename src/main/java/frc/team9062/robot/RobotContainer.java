@@ -11,14 +11,17 @@ import frc.team9062.robot.Autos.bumpsideTaxi;
 import frc.team9062.robot.Autos.clearsideTaxi;
 import frc.team9062.robot.Autos.middleTaxi;
 import frc.team9062.robot.Autos.testAuto;
+import frc.team9062.robot.Commands.LimedarCommands;
 import frc.team9062.robot.Commands.teleopArm;
 import frc.team9062.robot.Commands.teleopDrive;
 import frc.team9062.robot.Subsystems.ArmSubsystem;
 import frc.team9062.robot.Subsystems.DriveSubsystem;
+import frc.team9062.robot.Subsystems.LimedarSubsystem;
 
 public class RobotContainer {
   private DriveSubsystem driveSubsystem;
   private ArmSubsystem armSubsystem;
+  private LimedarSubsystem limedar_sys = new LimedarSubsystem();
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   public RobotContainer() {
@@ -38,6 +41,10 @@ public class RobotContainer {
 
     armSubsystem.setDefaultCommand(
       new teleopArm()
+    );
+    
+    limedar_sys.setDefaultCommand(
+      new LimedarCommands(limedar_sys)
     );
 
     configureBindings();
