@@ -9,6 +9,6 @@ Bill is an offseason bot for FRC team 9062 with an intake inspired by 5460. See 
 ## Dependencies
 - WPILIB 2023
 - CTRE Lib
-- Revlib
+- Pheonix Framework (v5)
 - Pathplanner
 - Advantage Scope
